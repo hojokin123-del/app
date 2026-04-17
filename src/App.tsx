@@ -9,6 +9,7 @@ import { EvaluationDetail } from './pages/EvaluationDetail';
 import { NewEvaluation } from './pages/NewEvaluation';
 import { Criteria } from './pages/Criteria';
 import { Settings } from './pages/Settings';
+import { Curriculum } from './pages/Curriculum';
 import './index.css';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="evaluations/new" element={<NewEvaluation />} />
             <Route path="evaluations/:id" element={<EvaluationDetail />} />
             <Route path="criteria" element={<Criteria />} />
+            <Route path="curriculum" element={<Curriculum />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

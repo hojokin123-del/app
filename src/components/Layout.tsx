@@ -1,11 +1,12 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Users, ClipboardList, BarChart2, Settings, Star } from 'lucide-react';
+import { Users, ClipboardList, BarChart2, Settings, Star, BookOpen } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'ダッシュボード', icon: BarChart2, end: true },
   { to: '/employees', label: '従業員管理', icon: Users },
   { to: '/evaluations', label: '評価管理', icon: ClipboardList },
   { to: '/criteria', label: '評価項目', icon: Star },
+  { to: '/curriculum', label: 'AI研修', icon: BookOpen },
   { to: '/settings', label: '設定', icon: Settings },
 ];
 

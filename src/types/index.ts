@@ -95,3 +95,37 @@ export const PERIOD_LABELS: Record<EvaluationPeriod, string> = {
   H1: '上期',
   H2: '下期',
 };
+
+// Curriculum types
+export type ClaudeTool = 'chat' | 'cowork' | 'code';
+
+export type LectureSection = {
+  title: string;
+  duration: number; // minutes
+  description: string;
+};
+
+export type Lecture = {
+  id: string;
+  number: number;
+  title: string;
+  subtitle: string;
+  tools: ClaudeTool[];
+  objective: string;
+  sections: LectureSection[];
+  practiceTitle: string;
+  practiceDescription: string;
+  keyTakeaways: string[];
+};
+
+export const CLAUDE_TOOL_LABELS: Record<ClaudeTool, string> = {
+  chat: 'Claude Chat',
+  cowork: 'Claude Cowork',
+  code: 'Claude Code',
+};
+
+export const CLAUDE_TOOL_COLORS: Record<ClaudeTool, string> = {
+  chat: '#6366f1',
+  cowork: '#0284c7',
+  code: '#059669',
+};
