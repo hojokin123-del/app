@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>助成金提案ナビ</title>
+<style>
+:root{
+  --paper:#f4f5f1; --card:#ffffff; --ink:#212b34; --muted:#5c6a72;
+  --accent:#2f5d8a; --accent-ink:#ffffff; --gold:#8f6d1d;
+  --line:#d9ddd2; --warn-bg:#f7f0dd; --warn-line:#cdb87e;
+  --field:#fbfcfa;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#161b20; --card:#1e252c; --ink:#e5e8e2; --muted:#9aa7ae;
+    --accent:#7fb0dd; --accent-ink:#10171e; --gold:#d6b45f;
+    --line:#333c44; --warn-bg:#2b2617; --warn-line:#7a6a35;
+    --field:#171d23;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#161b20; --card:#1e252c; --ink:#e5e8e2; --muted:#9aa7ae;
+  --accent:#7fb0dd; --accent-ink:#10171e; --gold:#d6b45f;
+  --line:#333c44; --warn-bg:#2b2617; --warn-line:#7a6a35;
+  --field:#171d23;
+}
+:root[data-theme="light"]{
+  --paper:#f4f5f1; --card:#ffffff; --ink:#212b34; --muted:#5c6a72;
+  --accent:#2f5d8a; --accent-ink:#ffffff; --gold:#8f6d1d;
+  --line:#d9ddd2; --warn-bg:#f7f0dd; --warn-line:#cdb87e;
+  --field:#fbfcfa;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
+  line-height:1.65; font-size:15px;
+}
+main{max-width:920px; margin:0 auto; padding:28px 18px 80px}
+header.hero{border-bottom:2px solid var(--accent); padding-bottom:14px; margin-bottom:22px}
+.hero .eyebrow{font-size:12px; letter-spacing:.18em; color:var(--accent); font-weight:700}
+.hero h1{margin:.15em 0 .2em; font-size:26px; text-wrap:balance}
+.hero p{margin:0; color:var(--muted); font-size:13.5px}
+.card{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:18px 20px; margin-bottom:16px}
+.card h2{margin:0 0 12px; font-size:16px; display:flex; align-items:center; gap:8px}
+.card h2 .step{background:var(--accent); color:var(--accent-ink); font-size:11px; border-radius:3px; padding:2px 7px; letter-spacing:.08em}
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px}
+label.f{display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:var(--muted)}
+label.f input, label.f select{
+  font:inherit; color:var(--ink); background:var(--field);
+  border:1px solid var(--line); border-radius:4px; padding:7px 9px;
+}
+label.f input:focus, label.f select:focus, button:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+fieldset.measure{border:1px solid var(--line); border-radius:5px; margin:0 0 10px; padding:10px 14px; background:var(--field)}
+fieldset.measure legend{font-weight:700; font-size:14px; padding:0 6px}
+fieldset.measure .params{display:flex; flex-wrap:wrap; gap:12px; margin-top:6px}
+fieldset.measure .params label.f{min-width:150px}
+fieldset.measure .note{font-size:12px; color:var(--muted); margin:4px 0 0}
+fieldset.measure.off .params, fieldset.measure.off .note{display:none}
+.chk{display:flex; align-items:center; gap:8px; font-weight:700; cursor:pointer}
+.chk input{width:16px; height:16px; accent-color:var(--accent)}
+button{
+  font:inherit; font-weight:700; cursor:pointer; border-radius:5px;
+  border:1px solid var(--accent); padding:10px 18px;
+  background:var(--accent); color:var(--accent-ink);
+}
+button.ghost{background:transparent; color:var(--accent)}
+button:hover{filter:brightness(1.08)}
+.actions{display:flex; flex-wrap:wrap; gap:10px; margin-top:6px}
+.disclaimer{
+  background:var(--warn-bg); border:1px solid var(--warn-line); border-radius:6px;
+  padding:10px 14px; font-size:12.5px; margin-bottom:18px;
+}
+.summary{display:flex; flex-wrap:wrap; gap:14px; margin-bottom:14px}
+.stat{flex:1 1 180px; border:1px solid var(--line); border-radius:6px; padding:10px 14px; background:var(--field)}
+.stat .k{font-size:12px; color:var(--muted)}
+.stat .v{font-size:22px; font-weight:700; font-variant-numeric:tabular-nums}
+.stat .v.money{color:var(--gold)}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse; width:100%; font-size:13.5px; min-width:640px}
+th,td{border:1px solid var(--line); padding:6px 9px; text-align:left; vertical-align:top}
+th{background:var(--field); font-size:12.5px; white-space:nowrap}
+td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap}
+td.month{white-space:nowrap}
+textarea{
+  width:100%; min-height:180px; font:12.5px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color:var(--ink); background:var(--field); border:1px solid var(--line); border-radius:5px; padding:10px;
+}
+.warnlist{color:#a15c00; font-size:13px; margin:8px 0 0; padding-left:1.2em}
+:root[data-theme="dark"] .warnlist{color:#e0b25c}
+@media (prefers-color-scheme: dark){ .warnlist{color:#e0b25c} }
+:root[data-theme="light"] .warnlist{color:#a15c00}
+#result{display:none}
+footer{color:var(--muted); font-size:12px; margin-top:26px}
+@media (prefers-reduced-motion: no-preference){
+  #result.show{animation:rise .3s ease}
+  @keyframes rise{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
+}
+</style>
+</head>
+<body>
+<main>
+<header class="hero">
+  <div class="eyebrow">HOJOKIN NAVI</div>
+  <h1>助成金提案ナビ</h1>
+  <p>顧客情報を入れると、対象になりうる助成金・概算受給額・申請タイムスケジュール・CSV・Claude用ヒアリングテキストを生成します。</p>
+</header>
+
+<div class="disclaimer">
+  <strong>⚠ 金額・要件はすべて概算の目安です。</strong>実際の提案・申請前に、必ず最新の公募要領・支給要領で要件と金額を確認してください。制度は年度・公募回で変わります。このツールはデータを外部送信しません（すべて端末内で完結）。
+</div>
+
+<section class="card">
+  <h2><span class="step">STEP 1</span>顧客情報</h2>
+  <div class="grid">
+    <label class="f">会社名<input id="company" placeholder="例）合同会社YOLO"></label>
+    <label class="f">業種<input id="industry" placeholder="例）飲食業"></label>
+    <label class="f">都道府県<input id="pref" placeholder="例）大阪府"></label>
+    <label class="f">従業員数<input id="employees" type="number" min="0" placeholder="例）8"></label>
+    <label class="f">雇用保険の加入
+      <select id="koyohoken">
+        <option value="不明">不明（要確認）</option>
+        <option value="加入済み">加入済み</option>
+        <option value="未加入">未加入</option>
+      </select>
+    </label>
+    <label class="f">開始月（計画申請月）<input id="startMonth" type="month"></label>
+    <label class="f">手数料率（%）<input id="feeRate" type="number" min="0" max="100" value="30"></label>
+  </div>
+</section>
+
+<section class="card">
+  <h2><span class="step">STEP 2</span>予定している施策（当てはまるものにチェック）</h2>
+
+  <fieldset class="measure off" id="m-career">
+    <legend><label class="chk"><input type="checkbox" id="c-career">契約社員・パートを正社員にする</label></legend>
+    <div class="params">
+      <label class="f">転換予定人数<input id="p-career-n" type="number" min="1" value="2"></label>
+      <label class="f">1人あたり受給目安（万円）<input id="p-career-amt" type="number" min="0" value="80"></label>
+    </div>
+    <p class="note">キャリアアップ助成金 正社員化コース。転換の6か月<b>前</b>に計画申請が必要。賃金3%以上UPが要件。受給は2期に分割。</p>
+  </fieldset>
+
+  <fieldset class="measure off" id="m-reskill">
+    <legend><label class="chk"><input type="checkbox" id="c-reskill">社員研修・リスキリングを実施する</label></legend>
+    <div class="params">
+      <label class="f">受講人数<input id="p-reskill-n" type="number" min="1" value="2"></label>
+      <label class="f">研修費用（万円）<input id="p-reskill-cost" type="number" min="0" value="120"></label>
+      <label class="f">経費助成率（%）<input id="p-reskill-rate" type="number" min="0" max="100" value="75"></label>
+    </div>
+    <p class="note">人材開発支援助成金（リスキリング支援コース等）。経費助成＋賃金助成。研修内容と職務の関連性が必要。</p>
+  </fieldset>
+
+  <fieldset class="measure off" id="m-gyomu">
+    <legend><label class="chk"><input type="checkbox" id="c-gyomu">設備投資＋最低賃金近傍の賃上げをする</label></legend>
+    <div class="params">
+      <label class="f">設備投資額（万円）<input id="p-gyomu-invest" type="number" min="0" value="320"></label>
+      <label class="f">補助率（%）<input id="p-gyomu-rate" type="number" min="0" max="100" value="75"></label>
+      <label class="f">上限額（万円）<input id="p-gyomu-cap" type="number" min="0" value="600"></label>
+    </div>
+    <p class="note">業務改善助成金。事業場内最低賃金の引上げ＋生産性向上のための設備投資が要件。上限はコース・人数で変動。車両は原則不可。</p>
+  </fieldset>
+
+  <fieldset class="measure off" id="m-hataraki">
+    <legend><label class="chk"><input type="checkbox" id="c-hataraki">労働時間短縮・年休促進に取り組む</label></legend>
+    <div class="params">
+      <label class="f">受給見込み（万円）<input id="p-hataraki-amt" type="number" min="0" value="140"></label>
+    </div>
+    <p class="note">働き方改革推進支援助成金。賃上げ加算で増額の可能性（目安140〜390万円）。交付決定<b>後</b>に取組実施。</p>
+  </fieldset>
+
+  <fieldset class="measure off" id="m-kakuho">
+    <legend><label class="chk"><input type="checkbox" id="c-kakuho">職場環境の整備に投資する（設備・制度）</label></legend>
+    <div class="params">
+      <label class="f">投資額（万円）<input id="p-kakuho-invest" type="number" min="0" value="200"></label>
+      <label class="f">補助率（%）<input id="p-kakuho-rate" type="number" min="0" max="100" value="50"></label>
+    </div>
+    <p class="note">人材確保等支援助成金（労働環境整備コース等）。経費の1/2〜3/4。支給まで1年半程度かかる。</p>
+  </fieldset>
+
+  <div class="actions">
+    <button id="btn-generate" type="button">提案パックを生成する</button>
+  </div>
+  <ul class="warnlist" id="warnings"></ul>
+</section>
+
+<section id="result">
+  <section class="card">
+    <h2><span class="step">結果</span>概算サマリー</h2>
+    <div class="summary">
+      <div class="stat"><div class="k">受給予定総額（概算）</div><div class="v money" id="sum-total">—</div></div>
+      <div class="stat"><div class="k">手数料（概算）</div><div class="v" id="sum-fee">—</div></div>
+      <div class="stat"><div class="k">対象制度数</div><div class="v" id="sum-count">—</div></div>
+    </div>
+    <h2 style="font-size:15px">申請タイムスケジュール</h2>
+    <div class="tablewrap">
+      <table id="schedule">
+        <thead><tr><th>実施月</th><th>助成金名</th><th>タスク内容</th><th>ステータス</th><th>入金予定額</th><th>備考</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button id="btn-csv" type="button">CSVをダウンロード（スプレッドシート形式）</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Claude用ヒアリングテキスト（申請書ドラフト作成の入力に使う）</h2>
+    <textarea id="out-hearing" spellcheck="false"></textarea>
+    <div class="actions"><button class="ghost" type="button" data-copy="out-hearing">コピー</button></div>
+  </section>
+
+  <section class="card">
+    <h2>提案文の下書き（送信前に必ず宛名・金額を確認）</h2>
+    <textarea id="out-teian" spellcheck="false"></textarea>
+    <div class="actions"><button class="ghost" type="button" data-copy="out-teian">コピー</button></div>
+  </section>
+</section>
+
+<footer>助成金提案ナビ v1.0 ｜ 生成物は下書きです。提出・送信前に必ず人間が確認してください。</footer>
+</main>
+
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const yen = n => '¥' + Math.round(n).toLocaleString('ja-JP');
+const man = v => (Number(v) || 0) * 10000;
+
+// 開始月の初期値 = 翌月
+(function(){
+  const d = new Date(); d.setMonth(d.getMonth() + 1);
+  $('startMonth').value = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+})();
+
+// チェックでパラメータ開閉
+document.querySelectorAll('fieldset.measure').forEach(fs => {
+  const cb = fs.querySelector('input[type=checkbox]');
+  cb.addEventListener('change', () => fs.classList.toggle('off', !cb.checked));
+});
+
+function addMonths(startYm, offset){
+  const [y, m] = startYm.split('-').map(Number);
+  const t = (y * 12 + (m - 1)) + offset;
+  return { y: Math.floor(t / 12), m: (t % 12) + 1, idx: t };
+}
+const fmtMonth = a => `${a.y}年${a.m}月`;
+
+// 各制度のスケジュール定義: offsetは開始月からの月数
+function buildPlans(){
+  const plans = [];
+  if ($('c-career').checked){
+    const n = Math.max(1, Number($('p-career-n').value) || 1);
+    const per = man($('p-career-amt').value);
+    const half = n * per / 2;
+    plans.push({ name: 'キャリアアップ助成金正社員化コース', total: n * per, rows: [
+      [0,  `計画申請（契約社員${n}名・転換の前に提出）`, 0, '転換6か月前までに計画申請'],
+      [4,  '正社員転換・賃金3%以上UP', 0, ''],
+      [10, '支給申請（1期目）※転換6か月後', 0, ''],
+      [16, '支給申請（2期目）／支給決定（1期目）', half, `1人あたり${Number($('p-career-amt').value) || 0}万円を2期分割`],
+      [22, '支給決定（2期目）', half, ''],
+    ]});
+  }
+  if ($('c-reskill').checked){
+    const n = Math.max(1, Number($('p-reskill-n').value) || 1);
+    const amt = man($('p-reskill-cost').value) * (Number($('p-reskill-rate').value) || 0) / 100;
+    plans.push({ name: '人材開発支援助成金リスキリング支援コース', total: amt, rows: [
+      [0,  `計画申請（受講${n}名）`, 0, `研修費用${Number($('p-reskill-cost').value) || 0}万円`],
+      [2,  '研修開始', 0, ''],
+      [4,  '支給申請（研修修了後）', 0, ''],
+      [10, '支給決定', amt, `経費助成${Number($('p-reskill-rate').value) || 0}%目安＋別途賃金助成`],
+    ]});
+  }
+  if ($('c-gyomu').checked){
+    const amt = Math.min(man($('p-gyomu-invest').value) * (Number($('p-gyomu-rate').value) || 0) / 100, man($('p-gyomu-cap').value));
+    plans.push({ name: '業務改善助成金', total: amt, rows: [
+      [0, '交付申請（賃上げ計画・見積書）', 0, `設備投資${Number($('p-gyomu-invest').value) || 0}万円`],
+      [2, '交付決定・設備導入', 0, '交付決定前の発注は対象外'],
+      [4, '賃上げ実施・実績報告', 0, ''],
+      [6, '支給決定', amt, '上限はコース・引上げ人数による'],
+    ]});
+  }
+  if ($('c-hataraki').checked){
+    const amt = man($('p-hataraki-amt').value);
+    plans.push({ name: '働き方改革推進支援助成金', total: amt, rows: [
+      [0, '交付申請', 0, ''],
+      [1, '交付決定・取組実施', 0, '交付決定前の取組は対象外'],
+      [3, '実績報告（賃上げ加算で増額可）', 0, ''],
+      [5, '支給決定', amt, '目安140〜390万円'],
+    ]});
+  }
+  if ($('c-kakuho').checked){
+    const amt = man($('p-kakuho-invest').value) * (Number($('p-kakuho-rate').value) || 0) / 100;
+    plans.push({ name: '人材確保等支援助成金（労働環境整備）', total: amt, rows: [
+      [0,  '計画申請', 0, `投資${Number($('p-kakuho-invest').value) || 0}万円・経費の1/2〜3/4`],
+      [13, '支給申請', 0, ''],
+      [19, '支給決定', amt, ''],
+    ]});
+  }
+  return plans;
+}
+
+let lastState = null;
+
+function generate(){
+  const warnings = [];
+  const company = $('company').value.trim() || '〇〇株式会社';
+  if (!$('company').value.trim()) warnings.push('会社名が未入力のため「〇〇株式会社」で仮置きしました。');
+  const startYm = $('startMonth').value || (new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0'));
+  const plans = buildPlans();
+  const w = $('warnings'); w.innerHTML = '';
+
+  if (plans.length === 0){
+    warnings.push('施策が1つも選ばれていません。STEP 2 でチェックを入れてください。');
+    warnings.forEach(t => { const li = document.createElement('li'); li.textContent = t; w.appendChild(li); });
+    $('result').classList.remove('show'); $('result').style.display = 'none';
+    return;
+  }
+  if ($('koyohoken').value === '未加入') warnings.push('雇用保険が未加入です。雇用関係助成金は雇用保険適用事業所であることが前提のため、先に加入手続きが必要です。');
+  if ($('koyohoken').value === '不明') warnings.push('雇用保険の加入状況が不明です。提案前に必ず確認してください。');
+
+  const total = plans.reduce((s, p) => s + p.total, 0);
+  const feeRate = Number($('feeRate').value) || 0;
+
+  // スケジュール行を統合して時系列に
+  const rows = [];
+  plans.forEach(p => p.rows.forEach(([off, task, amt, note]) => {
+    const m = addMonths(startYm, off);
+    rows.push({ idx: m.idx, month: fmtMonth(m), name: p.name, task, amt, note });
+  }));
+  rows.sort((a, b) => a.idx - b.idx);
+
+  // 表を描画
+  const tbody = $('schedule').querySelector('tbody');
+  tbody.innerHTML = '';
+  rows.forEach(r => {
+    const tr = document.createElement('tr');
+    const cells = [
+      ['month', r.month], ['', r.name], ['', r.task], ['', '未着手'],
+      ['num', r.amt ? yen(r.amt) : ''], ['', r.note],
+    ];
+    cells.forEach(([cls, text]) => {
+      const td = document.createElement('td');
+      if (cls) td.className = cls;
+      td.textContent = text; tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  $('sum-total').textContent = yen(total);
+  $('sum-fee').textContent = yen(total * feeRate / 100) + `（${feeRate}%）`;
+  $('sum-count').textContent = plans.length + '制度';
+
+  // ヒアリングテキスト
+  const today = new Date().toISOString().slice(0, 10);
+  const emp = $('employees').value ? $('employees').value + '名' : '未確認';
+  const hearing = [
+    `【助成金提案ヒアリング】作成日: ${today}（助成金提案ナビで自動生成）`,
+    '■ 会社情報',
+    `会社名: ${company} / 業種: ${$('industry').value || '未確認'} / 所在地: ${$('pref').value || '未確認'} / 従業員数: ${emp} / 雇用保険: ${$('koyohoken').value}`,
+    '■ 予定施策と概算受給額',
+    ...plans.map(p => `- ${p.name}: 概算 ${yen(p.total)}`),
+    `受給予定総額（概算）: ${yen(total)} / 手数料${feeRate}%: ${yen(total * feeRate / 100)}`,
+    '■ タイムスケジュール',
+    ...rows.map(r => `${r.month}: [${r.name}] ${r.task}${r.amt ? ' → 入金予定 ' + yen(r.amt) : ''}`),
+    '■ 要確認事項',
+    '- 雇用保険・社会保険の加入状況と労働保険料の滞納有無',
+    '- 就業規則（転換規定・賃金規定）の整備状況',
+    '- 直近の賃金台帳・雇用契約書・出勤簿',
+    '- 過去の同一助成金の受給歴（併給調整）',
+    '※金額はすべて概算。最新の公募要領・支給要領で必ず確認すること。',
+  ].join('\n');
+  $('out-hearing').value = hearing;
+
+  // 提案文下書き
+  const names = plans.map(p => p.name).join('、');
+  $('out-teian').value = [
+    '【送信前に宛名・金額・敬称を確認】',
+    `${company} 御中`,
+    '',
+    'いつもお世話になっております。',
+    'ご相談いただいた内容をもとに、活用できる可能性のある助成金を整理いたしました。',
+    '',
+    `対象となる可能性のある制度: ${names}`,
+    `受給予定総額（概算）: ${yen(total)}`,
+    '',
+    '添付のタイムスケジュールに、申請から入金までの流れをまとめております。',
+    '着手時期によって受給額・要件が変わるため、まずは30分ほどお時間をいただき、',
+    '進め方をご一緒に整理できればと思います。来週のご都合はいかがでしょうか。',
+    '',
+    '※金額は概算です。最新の公募要領に基づく確認が必要です。',
+  ].join('\n');
+
+  warnings.forEach(t => { const li = document.createElement('li'); li.textContent = t; w.appendChild(li); });
+  lastState = { company, total, feeRate, rows };
+  const r = $('result'); r.style.display = 'block'; r.classList.add('show');
+}
+
+function downloadCsv(){
+  if (!lastState) return;
+  const esc = v => /[",\n]/.test(v) ? '"' + String(v).replace(/"/g, '""') + '"' : String(v);
+  const lines = [
+    ['助成金申請タイムスケジュール'],
+    [lastState.company + ' 御中'],
+    ['受給予定総額', yen(lastState.total)],
+    [`手数料${lastState.feeRate}%`, yen(lastState.total * lastState.feeRate / 100)],
+    ['実施月', '助成金名', 'タスク内容', 'ステータス', '入金予定額', '備考'],
+    ...lastState.rows.map(r => [r.month, r.name, r.task, '未着手', r.amt ? yen(r.amt) : '', r.note]),
+    ['※金額はすべて概算。最新の公募要領・支給要領で要確認。'],
+  ];
+  const csv = '﻿' + lines.map(l => l.map(esc).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  const d = new Date(), ymd = d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0');
+  a.download = `${ymd}_${lastState.company}_提案_助成金タイムスケジュール.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(a.href);
+}
+
+$('btn-generate').addEventListener('click', generate);
+$('btn-csv').addEventListener('click', downloadCsv);
+document.querySelectorAll('button[data-copy]').forEach(b => {
+  b.addEventListener('click', async () => {
+    const ta = $(b.dataset.copy);
+    try { await navigator.clipboard.writeText(ta.value); b.textContent = 'コピーしました ✓'; }
+    catch { ta.select(); document.execCommand('copy'); b.textContent = 'コピーしました ✓'; }
+    setTimeout(() => { b.textContent = 'コピー'; }, 1600);
+  });
+});
+</script>
+</body>
+</html>
