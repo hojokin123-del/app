@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>オタスケAI Smart Call 業界別提案資料</title>
+<style>
+:root{
+  --paper:#f5f3ee; --card:#ffffff; --ink:#22282e; --muted:#5f6b73;
+  --brand:#2f5d8a; --line:#e2ddd2; --field:#faf8f3;
+  --warn-bg:#f6efda; --warn-line:#d3bd80; --warn-ink:#7a5c12;
+  --good:#1f7a52;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#15191e; --card:#1d242b; --ink:#e7eae5; --muted:#9aa6ad;
+    --brand:#83b2df; --line:#2f3841; --field:#1a2027;
+    --warn-bg:#2a2413; --warn-line:#6f5f2e; --warn-ink:#dcc074;
+    --good:#57c493;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#15191e; --card:#1d242b; --ink:#e7eae5; --muted:#9aa6ad;
+  --brand:#83b2df; --line:#2f3841; --field:#1a2027;
+  --warn-bg:#2a2413; --warn-line:#6f5f2e; --warn-ink:#dcc074; --good:#57c493;
+}
+:root[data-theme="light"]{
+  --paper:#f5f3ee; --card:#ffffff; --ink:#22282e; --muted:#5f6b73;
+  --brand:#2f5d8a; --line:#e2ddd2; --field:#faf8f3;
+  --warn-bg:#f6efda; --warn-line:#d3bd80; --warn-ink:#7a5c12; --good:#1f7a52;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
+  line-height:1.7; font-size:15px; -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:940px; margin:0 auto; padding:0 18px}
+
+/* nav */
+nav{
+  position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter:saturate(1.2) blur(8px); border-bottom:1px solid var(--line);
+}
+nav .wrap{display:flex; align-items:center; gap:10px; padding:9px 18px; flex-wrap:wrap}
+nav .brand{font-weight:800; font-size:13px; letter-spacing:.02em; margin-right:6px; color:var(--brand)}
+nav a{
+  font-size:12.5px; text-decoration:none; color:var(--ink); border:1px solid var(--line);
+  padding:4px 11px; border-radius:999px; background:var(--card); white-space:nowrap;
+}
+nav a:hover{border-color:var(--acc,var(--brand)); color:var(--acc,var(--brand))}
+nav a:focus-visible{outline:2px solid var(--brand); outline-offset:2px}
+
+/* masthead */
+header.top{padding:40px 0 12px}
+header.top .eyebrow{font-size:12px; letter-spacing:.22em; color:var(--brand); font-weight:800}
+header.top h1{font-size:30px; margin:.2em 0 .25em; text-wrap:balance; letter-spacing:.01em}
+header.top p{margin:0; color:var(--muted); max-width:60ch}
+
+/* money scheme band */
+.scheme{
+  background:var(--card); border:1px solid var(--line); border-radius:10px;
+  padding:22px 24px; margin:22px 0 30px;
+}
+.scheme h2{font-size:17px; margin:0 0 4px; display:flex; align-items:center; gap:10px}
+.scheme h2::before{content:""; width:8px; height:20px; background:var(--brand); border-radius:2px}
+.scheme .lead{color:var(--muted); margin:.2em 0 16px; font-size:13.5px}
+.flow{display:flex; align-items:stretch; gap:10px; flex-wrap:wrap}
+.flow .box{
+  flex:1 1 150px; border:1px solid var(--line); border-radius:8px; padding:12px 14px; background:var(--field);
+}
+.flow .box .k{font-size:11.5px; color:var(--muted); letter-spacing:.04em}
+.flow .box .v{font-size:24px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.2}
+.flow .box .v small{font-size:13px; font-weight:700}
+.flow .box.hl{border-color:var(--good)}
+.flow .box.hl .v{color:var(--good)}
+.flow .box.net{border-color:var(--brand)}
+.flow .box.net .v{color:var(--brand)}
+.flow .op{align-self:center; font-size:20px; color:var(--muted); font-weight:800}
+.scheme ul.mech{margin:16px 0 0; padding-left:1.1em; font-size:13.5px; color:var(--ink)}
+.scheme ul.mech li{margin:3px 0}
+.disc{
+  margin-top:14px; background:var(--warn-bg); border:1px solid var(--warn-line); color:var(--warn-ink);
+  border-radius:8px; padding:10px 14px; font-size:12.5px;
+}
+
+/* industry sheets */
+.sheet{
+  --acc:var(--brand);
+  background:var(--card); border:1px solid var(--line); border-top:5px solid var(--acc);
+  border-radius:10px; padding:28px 30px; margin:0 0 26px;
+}
+.sheet .eyebrow{font-size:12px; letter-spacing:.2em; font-weight:800; color:var(--acc)}
+.sheet h3{font-size:23px; margin:.15em 0 .1em; text-wrap:balance; letter-spacing:.01em}
+.sheet .sub{color:var(--muted); margin:0 0 20px; font-size:13.5px}
+.cols{display:grid; grid-template-columns:1fr 1fr; gap:22px}
+@media (max-width:680px){ .cols{grid-template-columns:1fr} }
+.block h4{
+  font-size:12.5px; letter-spacing:.06em; margin:0 0 8px; padding-bottom:5px;
+  border-bottom:1px solid var(--line); color:var(--muted); font-weight:800;
+}
+.block ul{margin:0; padding:0; list-style:none}
+.block ul li{position:relative; padding:5px 0 5px 22px; font-size:14px}
+.block.pain ul li::before{content:"！"; position:absolute; left:2px; top:5px; color:#c0662a; font-weight:800; font-size:12px}
+.block.fix ul li::before{
+  content:""; position:absolute; left:3px; top:11px; width:11px; height:6px;
+  border-left:2.5px solid var(--acc); border-bottom:2.5px solid var(--acc); transform:rotate(-45deg);
+}
+.metrics{display:flex; gap:12px; flex-wrap:wrap; margin:20px 0 0}
+.metric{
+  flex:1 1 140px; border:1px solid var(--line); border-radius:8px; padding:11px 14px; background:var(--field);
+}
+.metric .v{font-size:21px; font-weight:800; color:var(--acc); font-variant-numeric:tabular-nums; line-height:1.15}
+.metric .k{font-size:11.5px; color:var(--muted); margin-top:2px}
+.moneyrow{
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; padding:14px 16px;
+  border:1px dashed var(--acc); border-radius:8px; background:color-mix(in srgb,var(--acc) 6%, var(--card));
+}
+.moneyrow .mi{flex:1 1 110px}
+.moneyrow .mi .k{font-size:11px; color:var(--muted)}
+.moneyrow .mi .v{font-size:18px; font-weight:800; font-variant-numeric:tabular-nums}
+.talk{
+  margin-top:18px; padding:13px 16px 13px 18px; border-left:4px solid var(--acc);
+  background:var(--field); border-radius:0 8px 8px 0; font-size:14px;
+}
+.talk .lab{display:block; font-size:11px; letter-spacing:.1em; color:var(--acc); font-weight:800; margin-bottom:3px}
+.talk b{font-weight:700}
+
+.print-btn{
+  display:inline-flex; align-items:center; gap:7px; font:inherit; font-weight:700; cursor:pointer;
+  border:1px solid var(--brand); background:var(--brand); color:#fff; padding:9px 16px; border-radius:7px;
+}
+.print-btn:hover{filter:brightness(1.08)}
+footer{color:var(--muted); font-size:12px; margin:10px 0 70px; text-align:center}
+
+@media print{
+  nav, .print-btn, .toolbar{display:none !important}
+  body{background:#fff; color:#000; font-size:11pt}
+  .wrap{max-width:none; padding:0}
+  .scheme{page-break-after:always; border:1px solid #999}
+  .sheet{page-break-after:always; break-inside:avoid; border:1px solid #999; border-top:5px solid var(--acc); box-shadow:none}
+  .sheet:last-of-type{page-break-after:auto}
+  header.top{padding:0 0 10px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <span class="brand">オタスケAI Smart Call</span>
+    <a href="#scheme">資金スキーム</a>
+    <a href="#dental" style="--acc:#0f766e">歯科医院</a>
+    <a href="#salon" style="--acc:#a83f60">サロン</a>
+    <a href="#seitai" style="--acc:#46733a">整体・接骨院</a>
+    <a href="#food" style="--acc:#b2591e">飲食</a>
+    <a href="#funeral" style="--acc:#3c4a63">葬儀</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">業界別 提案資料</div>
+    <h1>「出られなかった電話」を、<br>助成金で無くす。</h1>
+    <p>電話対応のAI化（オタスケAI Smart Call）は、働き方改革推進支援助成金の対象になり得ます。導入費用の目安180万円に対し、要件を満たせば助成の目安は135〜140万円。実質負担 約40万円で、取りこぼし予約と電話対応の中断を止めます。</p>
+    <div class="toolbar" style="margin-top:16px">
+      <button class="print-btn" onclick="window.print()">🖨 印刷 / PDF保存（1業種＝1ページ）</button>
+    </div>
+  </header>
+
+  <!-- 資金スキーム -->
+  <section class="scheme" id="scheme">
+    <h2>資金スキーム（5業種共通）</h2>
+    <p class="lead">使う制度：働き方改革推進支援助成金〔労働時間短縮・年休促進支援コース〕。電話対応のAI化を「労働時間短縮の取組」と位置づけ、設備導入費を助成対象にします。</p>
+    <div class="flow">
+      <div class="box"><div class="k">導入費用（目安）</div><div class="v">180<small>万円</small></div></div>
+      <div class="op">×</div>
+      <div class="box"><div class="k">補助率</div><div class="v">3/4</div></div>
+      <div class="op">＝</div>
+      <div class="box hl"><div class="k">助成金（目安）</div><div class="v">約140<small>万円</small></div></div>
+      <div class="op">→</div>
+      <div class="box net"><div class="k">実質負担（目安）</div><div class="v">約40<small>万円</small></div></div>
+    </div>
+    <ul class="mech">
+      <li><b>補助率は3/4。</b>従業員30人以下で一定要件を満たすと4/5になる場合があります。</li>
+      <li><b>賃上げ加算がカギ。</b>対象労働者1名を<b>7%以上賃上げ</b>する成果目標を加えると上限額が加算（従業員10人未満は<b>2.5倍</b>、10〜30人は<b>2倍</b>）。180万円の3/4＝135万円が上限内に収まります。</li>
+      <li>賃上げ対象者は<b>雇用保険の被保険者</b>であること。</li>
+    </ul>
+    <div class="disc">
+      ⚠ 金額はすべて概算の目安です。<b>必ず最新の公募要領で要件・金額・受付期間を確認してください。</b>
+      導入・賃上げは<b>交付決定“後”に実施</b>すること（事前着手・事後申請は対象外）。賃上げは就業規則等で実際に実施が必要です。事業場の規模・コースで加算率と上限が変わります。
+    </div>
+  </section>
+
+  <div id="industries"></div>
+
+  <footer>
+    オタスケAI Smart Call 業界別提案資料 v1.0 ／ 数字は概算。提出・提案前に最新の公募要領で確認してください。<br>
+    受給を保証するものではありません。
+  </footer>
+</div>
+
+<script>
+'use strict';
+const industries = [
+  {
+    id:'dental', acc:'#0f766e', eyebrow:'歯科医院向け',
+    title:'予約の電話が、診療の手を止めていませんか。',
+    sub:'ユニットが埋まる時間帯ほど電話が鳴る。受付も衛生士も、予約対応のたびに手が止まります。',
+    pain:[
+      '施術中に受付が電話対応で中断し、患者さんを待たせる',
+      '昼休み・診療後に予約変更やキャンセルの留守電が溜まる',
+      '急患・キャンセル連絡を取りこぼし、空いた枠が埋まらない',
+    ],
+    fix:[
+      '予約・変更・キャンセルをAIが24時間一次受付',
+      '予約システムと自動連携（連携方式は特許）で二重予約を防止',
+      '診療時間中に鳴る電話を限りなくゼロへ',
+    ],
+    metrics:[
+      {v:'約60分/日', k:'受付1名の電話対応を削減'},
+      {v:'夜間・休診日', k:'も予約を自動獲得'},
+      {v:'取りこぼし0', k:'キャンセル枠を即再販'},
+    ],
+    talk:'衛生士さんが電話のたびに手を止める状態を、まず無くしましょう。空いたキャンセル枠も自動で埋められます。',
+  },
+  {
+    id:'salon', acc:'#a83f60', eyebrow:'美容室・ネイル・エステ向け',
+    title:'施術中は手が離せない。その間の電話、全部取れていますか。',
+    sub:'カラーもネイルも、手を止められない時間に限って新規の電話が鳴ります。一人サロンなら、なおさら。',
+    pain:[
+      'カット・カラー中に電話へ出られず、新規のお客様を逃す',
+      '一人サロンは電話に出た瞬間、目の前の施術が止まる',
+      '営業時間外の予約希望を、翌日わざわざ折り返している',
+    ],
+    fix:[
+      '施術中もAIが予約対応。指名・メニュー・希望時間をヒアリング',
+      'そのまま予約枠へ登録。折り返しの電話がなくなる',
+      'SNS経由の夜間問い合わせも取りこぼさない',
+    ],
+    metrics:[
+      {v:'新規予約', k:'の取りこぼしを回収'},
+      {v:'折返し0件', k:'翌日の電話がけを廃止'},
+      {v:'24時間', k:'予約を受付'},
+    ],
+    talk:'“出られなかった電話”が毎月何件あるか、一度数えてみませんか。その多くが新規のお客様です。',
+  },
+  {
+    id:'seitai', acc:'#46733a', eyebrow:'整体・接骨院向け',
+    title:'一人施術のあいだ、電話は誰が取っていますか。',
+    sub:'施術中は完全に電話が取れない。その一本が、そのまま競合の予約になっています。',
+    pain:[
+      '施術中は電話に出られず、新患が近隣の他院へ流れる',
+      '予約の電話と保険の問い合わせが混在して手間',
+      '受付を雇うほどの人件費の余裕はない',
+    ],
+    fix:[
+      '施術中の電話をAIが受け、症状・希望日時をヒアリングして予約化',
+      '定型の問い合わせはAIが一次対応、必要なものだけ折り返し',
+      '受付人件費をかけずに機会損失を止める',
+    ],
+    metrics:[
+      {v:'取りこぼし0', k:'施術中の新患を予約化'},
+      {v:'採用コスト0', k:'受付を雇わず一次受付'},
+      {v:'月々の負担', k:'受付1名の給与より軽い'},
+    ],
+    talk:'受付を一人雇う代わりに、AIに一次受付をさせるイメージです。人件費より安く、24時間動きます。',
+  },
+  {
+    id:'food', acc:'#b2591e', eyebrow:'飲食店向け',
+    title:'仕込みとピーク中に鳴る予約電話、取り切れていますか。',
+    sub:'忙しい時間ほど電話が鳴る——その矛盾が、接客の中断と予約の取りこぼしを生みます。',
+    pain:[
+      'ピーク帯の予約電話で、接客や調理の手が止まる',
+      '宴会・コース予約の人数やアレルギーの聞き取りに時間がかかる',
+      '営業時間外・仕込み中の予約を取りこぼす',
+    ],
+    fix:[
+      '予約・人数・コース・アレルギーをAIが正確に受付',
+      'ピーク中の電話対応による中断をゼロに',
+      '深夜・定休日も予約を獲得。無断キャンセルの前確認も自動',
+    ],
+    metrics:[
+      {v:'ホール', k:'の電話対応時間を削減'},
+      {v:'予約回収', k:'取りこぼしを取り戻す'},
+      {v:'24時間', k:'定休日も予約受付'},
+    ],
+    talk:'忙しい時間ほど電話が鳴る。その矛盾をAIで解きます。宴会予約の聞き漏らしも無くせます。',
+  },
+  {
+    id:'funeral', acc:'#3c4a63', eyebrow:'葬儀社向け',
+    title:'深夜の一報を、待たせず・慌てさせず受けられていますか。',
+    sub:'最初の一本に必ず出られる体制は信頼の要。ただ、24時間の当番は現場の大きな負担です。',
+    pain:[
+      '24時間365日の一次対応が、当番・人件費として重くのしかかる',
+      '深夜の一報に出遅れると、ご遺族は次の葬儀社へ連絡してしまう',
+      'ご遺族の不安な問い合わせに、一貫した一次対応が求められる',
+    ],
+    fix:[
+      'AIが24時間の一次受付を担い、担当者へ即エスカレーション',
+      '費用・流れ・対応エリアの定型案内を落ち着いた口調で',
+      '当番の待機負担を軽減しつつ、取りこぼしをゼロに',
+    ],
+    metrics:[
+      {v:'24時間', k:'一次対応の取りこぼし0'},
+      {v:'当番負担減', k:'深夜待機の人件費を軽減'},
+      {v:'即引継ぎ', k:'担当へ確実にエスカレーション'},
+    ],
+    talk:'“最初の電話”に必ず出られる体制を、人を増やさず作れます。AIは一次受付に徹し、大切な対応はすぐ担当へ繋ぎます。',
+    note:'※ご遺族対応の性質上、AIは「一次受付＋即時エスカレーション」に限定し、実対応は担当者が行う設計を推奨します。',
+  },
+];
+
+const yen = '実質40万円';
+const root = document.getElementById('industries');
+root.innerHTML = industries.map(d => `
+  <section class="sheet" id="${d.id}" style="--acc:${d.acc}">
+    <div class="eyebrow">${d.eyebrow}</div>
+    <h3>${d.title}</h3>
+    <p class="sub">${d.sub}</p>
+    <div class="cols">
+      <div class="block pain">
+        <h4>現場の困りごと</h4>
+        <ul>${d.pain.map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>
+      <div class="block fix">
+        <h4>Smart Call が変えること</h4>
+        <ul>${d.fix.map(t=>`<li>${t}</li>`).join('')}</ul>
+      </div>
+    </div>
+    <div class="metrics">
+      ${d.metrics.map(m=>`<div class="metric"><div class="v">${m.v}</div><div class="k">${m.k}</div></div>`).join('')}
+    </div>
+    <div class="moneyrow">
+      <div class="mi"><div class="k">導入費用（目安）</div><div class="v">180万円</div></div>
+      <div class="mi"><div class="k">助成金（目安）</div><div class="v" style="color:${d.acc}">約140万円</div></div>
+      <div class="mi"><div class="k">実質負担（目安）</div><div class="v" style="color:${d.acc}">約40万円</div></div>
+      <div class="mi"><div class="k">賃上げ要件</div><div class="v">対象1名 7%〜</div></div>
+    </div>
+    <div class="talk">
+      <span class="lab">商談での一言</span>
+      <b>「${d.talk}」</b>
+    </div>
+    ${d.note ? `<p class="sub" style="margin:14px 0 0; font-size:12.5px">${d.note}</p>` : ''}
+  </section>
+`).join('');
+</script>
+</body>
+</html>
