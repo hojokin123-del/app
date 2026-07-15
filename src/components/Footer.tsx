@@ -18,6 +18,13 @@ export function Footer() {
               24時間365日休まない、次世代のAI電話秘書。
               あなたの代わりに電話対応を完璧にこなします。
             </p>
+            <p className="footer-company">
+              運営会社：株式会社西河マネジメントセンター
+              <br />
+              所在地：京都府乙訓郡大山崎町円明寺北浦2-6
+              <br />
+              お問い合わせ：050-1720-7729
+            </p>
           </div>
           <div className="footer-links">
             <div className="footer-col">
@@ -36,7 +43,7 @@ export function Footer() {
           </div>
         </div>
         <div className="footer-bottom">
-          © {new Date().getFullYear()} Ai CALL. All rights reserved.
+          © {new Date().getFullYear()} 株式会社西河マネジメントセンター All rights reserved.
         </div>
       </div>
     </footer>
