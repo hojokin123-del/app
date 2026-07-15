@@ -17,8 +17,8 @@ export function FinalCTA() {
           <a href="#contact" className="btn btn-primary btn-lg">
             {CTA_LABEL} <ArrowRight size={20} />
           </a>
-          <a href="tel:0120-000-000" className="btn btn-ghost btn-lg">
-            <PhoneCall size={20} /> 0120-000-000
+          <a href="tel:050-1720-7729" className="btn btn-ghost btn-lg">
+            <PhoneCall size={20} /> 050-1720-7729
           </a>
         </div>
         <p className="cta-note">受付時間：平日 10:00〜19:00 ／ フォームは24時間受付</p>
