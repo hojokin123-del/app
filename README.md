@@ -1,73 +1,34 @@
-# React + TypeScript + Vite
+# Ai CALL — AI電話秘書 ランディングページ
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+24時間365日休まない次世代のAI電話秘書『**Ai CALL**』の紹介ランディングページです。
+かかってきた電話にAIが人のように応対し、要件をテキスト化してLINE・Slack・Chatworkへ
+リアルタイム通知する——というサービス価値を、1ページで訴求します。
 
-Currently, two official plugins are available:
+## 構成セクション
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. **Hero** — キャッチコピーとAI応対イメージ
+2. **Stats** — 60% / 24時間 / 0円 / 50円〜 の実績訴求
+3. **Problems** — 着信内訳（ドーナツ）と機会損失（棒グラフ）、4つのお悩み
+4. **Solution** — 「そのお悩み、AIがすべて解決します！」
+5. **HowItWorks** — 3ステップの仕組み
+6. **UseCases** — 飲食店 / エステ・美容 / 実店舗 / 個人事業主 の活用例
+7. **WhyChosen** — 選ばれる3つの理由＋比較表
+8. **Pricing** — 料金プラン
+9. **FinalCTA / Footer** — 問い合わせ導線
 
-## React Compiler
+## 技術スタック
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19 + TypeScript
+- Vite
+- recharts（グラフ描画）
+- lucide-react（アイコン）
 
-## Expanding the ESLint configuration
+## 開発
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # 開発サーバー
+npm run build    # 本番ビルド
+npm run preview  # ビルド結果をプレビュー
+npm run lint     # ESLint
 ```

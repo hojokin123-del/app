@@ -1,33 +1,34 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { AppProvider } from './context/AppContext';
-import { Layout } from './components/Layout';
-import { Dashboard } from './pages/Dashboard';
-import { Employees } from './pages/Employees';
-import { EmployeeDetail } from './pages/EmployeeDetail';
-import { Evaluations } from './pages/Evaluations';
-import { EvaluationDetail } from './pages/EvaluationDetail';
-import { NewEvaluation } from './pages/NewEvaluation';
-import { Criteria } from './pages/Criteria';
-import { Settings } from './pages/Settings';
-import './index.css';
+import { Header } from './components/Header';
+import { Hero } from './components/Hero';
+import { StatsStrip } from './components/StatsStrip';
+import { Problems } from './components/Problems';
+import { Solution } from './components/Solution';
+import { HowItWorks } from './components/HowItWorks';
+import { UseCases } from './components/UseCases';
+import { WhyChosen } from './components/WhyChosen';
+import { Pricing } from './components/Pricing';
+import { FinalCTA } from './components/FinalCTA';
+import { Footer } from './components/Footer';
+import { useReveal } from './components/useReveal';
 
 export default function App() {
+  useReveal();
+
   return (
-    <AppProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="employees" element={<Employees />} />
-            <Route path="employees/:id" element={<EmployeeDetail />} />
-            <Route path="evaluations" element={<Evaluations />} />
-            <Route path="evaluations/new" element={<NewEvaluation />} />
-            <Route path="evaluations/:id" element={<EvaluationDetail />} />
-            <Route path="criteria" element={<Criteria />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </AppProvider>
+    <>
+      <Header />
+      <main>
+        <Hero />
+        <StatsStrip />
+        <Problems />
+        <Solution />
+        <HowItWorks />
+        <UseCases />
+        <WhyChosen />
+        <Pricing />
+        <FinalCTA />
+      </main>
+      <Footer />
+    </>
   );
 }
