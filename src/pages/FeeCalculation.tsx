@@ -24,7 +24,7 @@ export function FeeCalculation() {
     [agencies, sales, month],
   );
 
-  const monthSales = sales.filter(s => s.month === month && s.isTraining);
+  const monthSales = sales.filter(s => s.month === month);
   const totalBase = monthSales.reduce((s, x) => s + x.amount, 0);
   const totalFee = fees.reduce((s, f) => s + f.subtotal, 0);
   const hasStatements = statements.some(st => st.month === month);
@@ -54,7 +54,7 @@ export function FeeCalculation() {
           <div className="stat-icon" style={{ background: '#eef2ff' }}><Calculator size={24} color="#6366f1" /></div>
           <div className="stat-body">
             <div className="stat-value" style={{ fontSize: 22 }}>{formatYen(totalBase)}</div>
-            <div className="stat-label">研修売上（対象ベース）</div>
+            <div className="stat-label">対象売上（フィーベース）</div>
           </div>
         </div>
         <div className="stat-card">
@@ -103,8 +103,8 @@ export function FeeCalculation() {
                         <table className="table" style={{ margin: 0 }}>
                           <thead>
                             <tr>
-                              <th>種別</th><th>入金日</th><th>顧客先</th><th>研修内容</th>
-                              <th style={{ textAlign: 'right' }}>研修費用</th>
+                              <th>種別</th><th>入金日</th><th>顧客先</th><th>内容</th>
+                              <th style={{ textAlign: 'right' }}>金額（入金）</th>
                               <th style={{ textAlign: 'right' }}>率</th>
                               <th style={{ textAlign: 'right' }}>フィー</th>
                             </tr>
@@ -138,14 +138,14 @@ export function FeeCalculation() {
               );
             })}
             {fees.length === 0 && (
-              <tr><td colSpan={5} className="empty-row">この月の研修売上（フィー対象）はありません</td></tr>
+              <tr><td colSpan={5} className="empty-row">この月の対象売上（フィー計算対象）はありません</td></tr>
             )}
           </tbody>
         </table>
       </div>
 
       <p className="text-muted" style={{ fontSize: 13 }}>
-        オーバーライド型：二次代理店が販売した研修費用に対し、二次は自社率、所属する一次代理店は一次率をそれぞれ計上します。
+        オーバーライド型：二次代理店が販売した売上に対し、二次は自社率、所属する一次代理店は一次率をそれぞれ計上します。
         一次代理店の直販は一次率のみ計上します。各代理店の率は「代理店マスター」で登録します。
       </p>
     </div>

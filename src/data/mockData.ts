@@ -3,9 +3,10 @@ import type { Agency, Sale, AppSettings } from '../types';
 // ============================================================
 // 初期データ
 // 出典: Google スプレッドシート「石川決済（西河マネジメントセンター）」
-//   - シート「Leap代理店リスト」「MMH精算リスト」より研修（研修費用）行を転記
-//   - 研修費用 3,000,000 → 代理店手数料(一次)1,650,000=55% / 2次代理店手数料 1,350,000=45%
-//     という実データの配分から各代理店の手数料率を設定
+//   - シート「2025.4～」の入金台帳から、「代理店」列に会社名が入っており
+//     かつ「入金」がある行を抽出し、入金日の月をキーに転記
+//   - 代理店ごとの手数料率(%)はこのシートには無いため、暫定値を設定
+//     （実際の契約率は「代理店マスター」で登録・調整してください）
 // ============================================================
 
 export const settings: AppSettings = {
@@ -17,54 +18,108 @@ export const settings: AppSettings = {
 };
 
 export const agencies: Agency[] = [
-  // ===== 一次代理店 =====
+  // ===== 一次代理店（「2025.4～」台帳の代理店列に登場） =====
   {
     id: 'ag_leap',
     code: 'A-001',
     name: 'Leap',
     tier: 'primary',
     parentId: null,
-    feeRate: 55,
-    contactPerson: '貞末',
+    feeRate: 15, // 暫定
+    contactPerson: '—',
     email: 'contact@leap.example.jp',
-    phone: '03-1000-0001',
+    phone: '',
     bankName: 'みずほ銀行',
     bankBranch: '渋谷支店',
     accountType: '普通',
     accountNumber: '1234567',
     accountHolder: 'カ）リープ',
     active: true,
-    note: '二次代理店：貞末、天馬堂、SSC',
+    note: '二次代理店：貞末、天満堂、SSC、猫の手',
+  },
+  {
+    id: 'ag_comics',
+    code: 'A-002',
+    name: 'コミクス',
+    tier: 'primary',
+    parentId: null,
+    feeRate: 10, // 暫定
+    contactPerson: '—',
+    email: '',
+    phone: '',
+    bankName: '',
+    bankBranch: '',
+    accountType: '普通',
+    accountNumber: '',
+    accountHolder: 'コミクス',
+    active: true,
+    note: '',
+  },
+  {
+    id: 'ag_adh',
+    code: 'A-003',
+    name: 'ADH',
+    tier: 'primary',
+    parentId: null,
+    feeRate: 12, // 暫定
+    contactPerson: '—',
+    email: '',
+    phone: '',
+    bankName: '',
+    bankBranch: '',
+    accountType: '普通',
+    accountNumber: '',
+    accountHolder: 'ADH',
+    active: true,
+    note: '',
+  },
+  {
+    id: 'ag_keplanning',
+    code: 'A-004',
+    name: 'ｹｰﾌﾟﾗﾝﾆﾝｸﾞ',
+    tier: 'primary',
+    parentId: null,
+    feeRate: 8, // 暫定
+    contactPerson: '—',
+    email: '',
+    phone: '',
+    bankName: '',
+    bankBranch: '',
+    accountType: '普通',
+    accountNumber: '',
+    accountHolder: 'ケープランニング',
+    active: true,
+    note: '',
   },
   {
     id: 'ag_mmh',
-    code: 'A-002',
+    code: 'A-005',
     name: 'MMH',
     tier: 'primary',
     parentId: null,
-    feeRate: 10,
+    feeRate: 10, // 暫定
     contactPerson: '中村大輔',
     email: 'contact@mmh.example.jp',
-    phone: '03-1000-0002',
+    phone: '',
     bankName: '三菱UFJ銀行',
     bankBranch: '新宿支店',
     accountType: '普通',
     accountNumber: '2345678',
     accountHolder: 'カ）エムエムエイチ',
     active: true,
-    note: '二次代理店：ファンラボ',
+    note: '',
   },
-  // ===== 二次代理店（Leap配下） =====
+  // ===== 二次代理店（Leap配下：代理店マスターシートより） =====
   {
     id: 'ag_sadasue',
     code: 'B-101',
     name: '貞末',
     tier: 'secondary',
     parentId: 'ag_leap',
-    feeRate: 45,
+    feeRate: 10, // 暫定
     contactPerson: '貞末',
-    email: 'sadasue@example.jp',
-    phone: '090-1000-0101',
+    email: '',
+    phone: '',
     bankName: '福岡銀行',
     bankBranch: '博多支店',
     accountType: '普通',
@@ -79,141 +134,45 @@ export const agencies: Agency[] = [
     name: 'SSC',
     tier: 'secondary',
     parentId: 'ag_leap',
-    feeRate: 45,
+    feeRate: 10, // 暫定
     contactPerson: '—',
-    email: 'ssc@example.jp',
-    phone: '090-1000-0102',
-    bankName: '三井住友銀行',
-    bankBranch: '本店営業部',
+    email: '',
+    phone: '',
+    bankName: '',
+    bankBranch: '',
     accountType: '普通',
-    accountNumber: '4567890',
+    accountNumber: '',
     accountHolder: 'エスエスシー',
-    active: true,
-    note: '',
-  },
-  {
-    id: 'ag_tenmado',
-    code: 'B-103',
-    name: '天馬堂',
-    tier: 'secondary',
-    parentId: 'ag_leap',
-    feeRate: 45,
-    contactPerson: '—',
-    email: 'tenmado@example.jp',
-    phone: '090-1000-0103',
-    bankName: 'りそな銀行',
-    bankBranch: '大阪支店',
-    accountType: '普通',
-    accountNumber: '5678901',
-    accountHolder: 'テンマドウ',
-    active: true,
-    note: 'Leap天馬堂',
-  },
-  // ===== 二次代理店（MMH配下） =====
-  {
-    id: 'ag_funlab',
-    code: 'B-201',
-    name: 'ファンラボ',
-    tier: 'secondary',
-    parentId: 'ag_mmh',
-    feeRate: 15,
-    contactPerson: 'funlab',
-    email: 'funlab@example.jp',
-    phone: '090-1000-0201',
-    bankName: 'GMOあおぞらネット銀行',
-    bankBranch: '法人第一営業部',
-    accountType: '普通',
-    accountNumber: '6789012',
-    accountHolder: 'ファンラボ',
     active: true,
     note: '',
   },
 ];
 
-const T = '研修'; // 研修カテゴリ
-const OTHER = 'DX・GX';
-
 export const sales: Sale[] = [
-  // ===== 2025-04 =====
+  // ===== 2025-04（「2025.4～」台帳：代理店列に会社名＋入金あり） =====
   {
-    id: 's001', month: '2025-04', date: '2025-04-23', agencyId: 'ag_funlab',
-    customerName: '.関自動車', productName: 'リスキリング研修', category: T,
-    amount: 500000, isTraining: true, source: 'import',
-  },
-  // 研修以外（フィー計算対象外）— 抽出フィルタの動作確認用
-  {
-    id: 's002', month: '2025-04', date: '2025-04-15', agencyId: 'ag_leap',
-    customerName: 'アサユサイト', productName: 'DX+GX定額制', category: OTHER,
-    amount: 660000, isTraining: false, source: 'import',
-  },
-
-  // ===== 2025-05 =====
-  {
-    id: 's010', month: '2025-05', date: '2025-05-22', agencyId: 'ag_sadasue',
-    customerName: 'RELIFE', productName: 'リスキリング研修', category: T,
-    amount: 3000000, isTraining: true, source: 'import',
-  },
-  {
-    id: 's011', month: '2025-05', date: '2025-05-29', agencyId: 'ag_ssc',
-    customerName: 'successful', productName: 'リスキリング研修', category: T,
-    amount: 6000000, isTraining: true, source: 'import',
-  },
-  {
-    id: 's012', month: '2025-05', date: '2025-05-30', agencyId: 'ag_leap',
-    customerName: 'ネスル', productName: 'DX・GX研修', category: T,
-    amount: 1800000, isTraining: true, source: 'import',
-  },
-  // 研修以外
-  {
-    id: 's013', month: '2025-05', date: '2025-05-09', agencyId: 'ag_mmh',
-    customerName: 'コミクス', productName: 'DX定額制', category: OTHER,
+    id: 's001', month: '2025-04', date: '2025-04-01', agencyId: 'ag_comics',
+    customerName: 'キャンプロモーション', productName: 'DX定額制＋GXeラーニング', category: 'DX・GX',
     amount: 1100000, isTraining: false, source: 'import',
   },
-
-  // ===== 2025-06 =====
   {
-    id: 's020', month: '2025-06', date: '2025-06-12', agencyId: 'ag_tenmado',
-    customerName: '志力工業', productName: 'DX・GX研修', category: T,
-    amount: 600000, isTraining: true, source: 'import',
+    id: 's002', month: '2025-04', date: '2025-04-09', agencyId: 'ag_adh',
+    customerName: 'かーきよ', productName: 'DX+GX定額制', category: 'DX・GX',
+    amount: 3300000, isTraining: false, source: 'import',
   },
   {
-    id: 's021', month: '2025-06', date: '2025-06-25', agencyId: 'ag_tenmado',
-    customerName: 'ROTT', productName: 'DX・GX研修', category: T,
-    amount: 600000, isTraining: true, source: 'import',
+    id: 's003', month: '2025-04', date: '2025-04-23', agencyId: 'ag_keplanning',
+    customerName: '星野電業社', productName: '定額制', category: '定額制',
+    amount: 330000, isTraining: false, source: 'import',
   },
   {
-    id: 's022', month: '2025-06', date: '2025-06-30', agencyId: 'ag_ssc',
-    customerName: 'アラタガーデン', productName: 'リスキリング研修', category: T,
-    amount: 1800000, isTraining: true, source: 'import',
+    id: 's004', month: '2025-04', date: '2025-04-23', agencyId: 'ag_mmh',
+    customerName: '.関自動車', productName: 'DX定額制＋GXeラーニング', category: 'DX・GX',
+    amount: 550000, isTraining: false, source: 'import',
   },
   {
-    id: 's023', month: '2025-06', date: '2025-06-30', agencyId: 'ag_ssc',
-    customerName: '三建設', productName: 'リスキリング研修', category: T,
-    amount: 1200000, isTraining: true, source: 'import',
-  },
-  {
-    id: 's024', month: '2025-06', date: '2025-06-30', agencyId: 'ag_ssc',
-    customerName: 'ACR', productName: 'リスキリング研修', category: T,
-    amount: 1200000, isTraining: true, source: 'import',
-  },
-  {
-    id: 's025', month: '2025-06', date: '2025-06-30', agencyId: 'ag_sadasue',
-    customerName: '前田電業', productName: 'リスキリング研修', category: T,
-    amount: 1200000, isTraining: true, source: 'import',
-  },
-  {
-    id: 's026', month: '2025-06', date: '2025-06-30', agencyId: 'ag_sadasue',
-    customerName: '真浄葬祭', productName: 'リスキリング研修', category: T,
-    amount: 3600000, isTraining: true, source: 'import',
-  },
-  {
-    id: 's027', month: '2025-06', date: '2025-06-30', agencyId: 'ag_tenmado',
-    customerName: 'COLOR', productName: 'DX・GX研修', category: T,
-    amount: 3600000, isTraining: true, source: 'import',
-  },
-  {
-    id: 's028', month: '2025-06', date: '2025-06-18', agencyId: 'ag_mmh',
-    customerName: '横堀商事', productName: '医療サイバーセキュリティ対策研修', category: T,
-    amount: 1000000, isTraining: true, source: 'import',
+    id: 's005', month: '2025-04', date: '2025-04-30', agencyId: 'ag_leap',
+    customerName: '貞末', productName: 'DX+GX定額制', category: 'DX・GX',
+    amount: 5280000, isTraining: false, source: 'import',
   },
 ];

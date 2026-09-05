@@ -19,7 +19,7 @@ function SaleModal({ sale, onClose, onSave }: ModalProps) {
     agencyId: sale?.agencyId ?? agencies[0]?.id ?? '',
     customerName: sale?.customerName ?? '',
     productName: sale?.productName ?? '',
-    category: sale?.category ?? '研修',
+    category: sale?.category ?? '売上',
     amount: sale?.amount ?? 0,
     isTraining: sale?.isTraining ?? true,
     isTrainingTouched: sale !== undefined,
@@ -74,8 +74,8 @@ function SaleModal({ sale, onClose, onSave }: ModalProps) {
             <input required value={form.customerName} onChange={e => set({ customerName: e.target.value })} />
           </div>
           <div className="form-group">
-            <label>研修内容・商材 *</label>
-            <input required value={form.productName} onChange={e => handleProductChange(e.target.value)} placeholder="リスキリング研修" />
+            <label>内容・商材 *</label>
+            <input required value={form.productName} onChange={e => handleProductChange(e.target.value)} placeholder="DX+GX定額制" />
           </div>
           <div className="form-row">
             <div className="form-group">
@@ -83,7 +83,7 @@ function SaleModal({ sale, onClose, onSave }: ModalProps) {
               <input value={form.category} onChange={e => set({ category: e.target.value })} />
             </div>
             <div className="form-group">
-              <label>研修費用（円）*</label>
+              <label>金額（入金・円）*</label>
               <input
                 required type="number" min={0} step={1}
                 value={form.amount}
@@ -98,7 +98,7 @@ function SaleModal({ sale, onClose, onSave }: ModalProps) {
                 checked={form.isTraining}
                 onChange={e => set({ isTraining: e.target.checked, isTrainingTouched: true })}
               />
-              研修に関する売上（フィー計算の対象）
+              研修に関する売上（区分フラグ）
             </label>
           </div>
           <div className="modal-footer">
@@ -177,7 +177,7 @@ export function Sales() {
         <div className="stat-card">
           <div className="stat-body">
             <div className="stat-value" style={{ fontSize: 22, color: 'var(--primary)' }}>{formatYen(trainingAmount)}</div>
-            <div className="stat-label">うち研修（フィー対象）</div>
+            <div className="stat-label">うち研修</div>
           </div>
         </div>
       </div>
@@ -185,7 +185,7 @@ export function Sales() {
       <div className="filter-bar">
         <div className="search-box">
           <Search size={16} />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="顧客先・研修内容・代理店で検索..." />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="顧客先・内容・代理店で検索..." />
         </div>
         <select value={monthFilter} onChange={e => setMonthFilter(e.target.value)} className="filter-select">
           <option value="">すべての月</option>
@@ -202,7 +202,7 @@ export function Sales() {
           <thead>
             <tr>
               <th>入金日</th><th>対象月</th><th>販売代理店</th><th>顧客先</th>
-              <th>研修内容</th><th style={{ textAlign: 'right' }}>研修費用</th><th>種別</th><th>操作</th>
+              <th>内容</th><th style={{ textAlign: 'right' }}>金額（入金）</th><th>種別</th><th>操作</th>
             </tr>
           </thead>
           <tbody>

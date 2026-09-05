@@ -15,9 +15,10 @@ export type AgencyMonthlyFee = {
 
 /**
  * オーバーライド型フィー計算。
- * - 二次代理店が販売 → 二次は自社%（secondary）、親の一次は同じ研修費用に対し一次%（override）
+ * - 二次代理店が販売 → 二次は自社%（secondary）、親の一次は同じ売上ベースに対し一次%（override）
  * - 一次代理店が直販 → 一次%（direct）
- * 各代理店は「研修費用（売上ベース）」に対して自社の登録%を掛ける。
+ * 各代理店は「売上（入金）ベース」に対して自社の登録%を掛ける。
+ * 対象は当月の全売上（代理店が紐づく入金行）。
  */
 export function computeMonthlyFees(
   agencies: Agency[],
@@ -33,7 +34,7 @@ export function computeMonthlyFees(
     else linesByAgency.set(agencyId, [line]);
   };
 
-  const monthSales = sales.filter(s => s.month === month && s.isTraining);
+  const monthSales = sales.filter(s => s.month === month);
 
   for (const sale of monthSales) {
     const seller = byId.get(sale.agencyId);

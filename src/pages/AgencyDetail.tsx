@@ -119,12 +119,12 @@ export function AgencyDetail() {
           </div>
 
           <div className="card">
-            <div className="card-header"><h2>販売した研修売上</h2></div>
+            <div className="card-header"><h2>販売した売上</h2></div>
             <table className="table">
               <thead>
                 <tr>
-                  <th>入金日</th><th>顧客先</th><th>研修内容</th>
-                  <th style={{ textAlign: 'right' }}>研修費用</th><th>種別</th>
+                  <th>入金日</th><th>顧客先</th><th>内容</th>
+                  <th style={{ textAlign: 'right' }}>金額（入金）</th><th>種別</th>
                 </tr>
               </thead>
               <tbody>
@@ -150,7 +150,7 @@ export function AgencyDetail() {
 
           {agency.tier === 'primary' && monthlyFees.some(m => m.lines.some(l => l.type === 'override')) && (
             <p className="text-muted" style={{ fontSize: 13 }}>
-              ※「{FEE_TYPE_LABELS.override}」は配下の二次代理店が販売した研修費用に対する取り分です。
+              ※「{FEE_TYPE_LABELS.override}」は配下の二次代理店が販売した売上に対する取り分です。
             </p>
           )}
         </div>

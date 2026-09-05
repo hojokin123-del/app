@@ -25,15 +25,15 @@ export function Dashboard() {
     () => (currentMonth ? computeMonthlyFees(agencies, sales, currentMonth) : []),
     [agencies, sales, currentMonth],
   );
-  const currentBase = sales.filter(s => s.month === currentMonth && s.isTraining).reduce((s, x) => s + x.amount, 0);
+  const currentBase = sales.filter(s => s.month === currentMonth).reduce((s, x) => s + x.amount, 0);
   const currentFeeTotal = currentFees.reduce((s, f) => s + f.subtotal, 0);
 
   // 月別推移（古い順）
   const trend = useMemo(() => {
     return [...months].reverse().map(m => {
-      const base = sales.filter(s => s.month === m && s.isTraining).reduce((s, x) => s + x.amount, 0);
+      const base = sales.filter(s => s.month === m).reduce((s, x) => s + x.amount, 0);
       const fee = computeMonthlyFees(agencies, sales, m).reduce((s, f) => s + f.subtotal, 0);
-      return { month: formatMonth(m), 研修売上: base, フィー: fee };
+      return { month: formatMonth(m), 売上: base, フィー: fee };
     });
   }, [months, sales, agencies]);
 
@@ -48,7 +48,7 @@ export function Dashboard() {
   );
 
   const recentSales = useMemo(
-    () => [...sales].filter(s => s.isTraining).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 6),
+    () => [...sales].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 6),
     [sales],
   );
 
@@ -71,7 +71,7 @@ export function Dashboard() {
           <div className="stat-icon" style={{ background: '#eff6ff' }}><Receipt size={24} color="#3b82f6" /></div>
           <div className="stat-body">
             <div className="stat-value" style={{ fontSize: 24 }}>{formatYen(currentBase)}</div>
-            <div className="stat-label">当月 研修売上</div>
+            <div className="stat-label">当月 売上</div>
           </div>
         </div>
         <div className="stat-card">
@@ -92,7 +92,7 @@ export function Dashboard() {
 
       <div className="dashboard-grid">
         <div className="card">
-          <div className="card-header"><h2>研修売上・フィー 月別推移</h2></div>
+          <div className="card-header"><h2>売上・フィー 月別推移</h2></div>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={280}>
               <ComposedChart data={trend}>
@@ -101,7 +101,7 @@ export function Dashboard() {
                 <YAxis tickFormatter={YEN_M} tick={{ fontSize: 11 }} />
                 <Tooltip formatter={(v) => formatYen(Number(v))} />
                 <Legend />
-                <Bar dataKey="研修売上" fill="#c7d2fe" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="売上" fill="#c7d2fe" radius={[4, 4, 0, 0]} />
                 <Line dataKey="フィー" stroke="#6366f1" strokeWidth={2} dot={{ r: 3 }} />
               </ComposedChart>
             </ResponsiveContainer>
@@ -129,7 +129,7 @@ export function Dashboard() {
 
         <div className="card">
           <div className="card-header">
-            <h2>最近の研修売上</h2>
+            <h2>最近の売上</h2>
             <Link to="/sales" className="btn btn-secondary btn-sm">すべて見る</Link>
           </div>
           <div className="activity-list">
@@ -146,7 +146,7 @@ export function Dashboard() {
                 </div>
               );
             })}
-            {recentSales.length === 0 && <div className="empty-state">研修売上がありません</div>}
+            {recentSales.length === 0 && <div className="empty-state">売上がありません</div>}
           </div>
         </div>
 

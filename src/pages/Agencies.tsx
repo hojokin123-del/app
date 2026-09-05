@@ -94,7 +94,7 @@ function AgencyModal({ agency, onClose, onSave }: ModalProps) {
                 {primaries.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
               </select>
               <span className="text-muted" style={{ fontSize: 12 }}>
-                二次が販売した研修費用に対し、この一次代理店へオーバーライドが計上されます。
+                二次が販売した売上に対し、この一次代理店へオーバーライドが計上されます。
               </span>
             </div>
           )}

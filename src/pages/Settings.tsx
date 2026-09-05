@@ -114,8 +114,8 @@ export function Settings() {
             本システムは <strong>オーバーライド型</strong> で計算します。
           </p>
           <ul style={{ fontSize: 14, lineHeight: 1.8, paddingLeft: 20, color: 'var(--text-muted)' }}>
-            <li>二次代理店が販売した研修費用に対し、<strong>二次代理店は自社率</strong>を計上</li>
-            <li>同じ研修費用に対し、所属する<strong>一次代理店は一次率</strong>をオーバーライドとして計上</li>
+            <li>二次代理店が販売した売上に対し、<strong>二次代理店は自社率</strong>を計上</li>
+            <li>同じ売上に対し、所属する<strong>一次代理店は一次率</strong>をオーバーライドとして計上</li>
             <li>一次代理店の直販は<strong>一次率のみ</strong>を計上</li>
           </ul>
           <p className="text-muted" style={{ fontSize: 13 }}>

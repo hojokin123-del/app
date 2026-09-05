@@ -67,8 +67,8 @@ export function StatementDetail() {
         <table className="table statement-table">
           <thead>
             <tr>
-              <th>種別</th><th>入金日</th><th>顧客先</th><th>研修内容</th>
-              <th style={{ textAlign: 'right' }}>研修費用</th>
+              <th>種別</th><th>入金日</th><th>顧客先</th><th>内容</th>
+              <th style={{ textAlign: 'right' }}>金額（入金）</th>
               <th style={{ textAlign: 'right' }}>率</th>
               <th style={{ textAlign: 'right' }}>フィー額</th>
             </tr>
