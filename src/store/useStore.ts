@@ -1,147 +1,101 @@
 import { useState, useCallback } from 'react';
-import { departments as initialDepts, employees as initialEmps, evaluationCriteria as initialCriteria, evaluations as initialEvals } from '../data/mockData';
-import type { Department, Employee, EvaluationCriteria, Evaluation, EvaluationItem, Goal, RatingScale } from '../types';
+import { agencies as initialAgencies, sales as initialSales, settings as initialSettings } from '../data/mockData';
+import type { Agency, Sale, PaymentStatement, AppSettings } from '../types';
+import { computeMonthlyFees, buildStatement } from '../lib/feeCalc';
 
-let evalIdCounter = 100;
-let empIdCounter = 100;
-let goalIdCounter = 100;
+let agencyIdCounter = 1000;
+let saleIdCounter = 1000;
+let statementIdCounter = 1000;
 
 export function useStore() {
-  const [departments, setDepartments] = useState<Department[]>(initialDepts);
-  const [employees, setEmployees] = useState<Employee[]>(initialEmps);
-  const [criteria] = useState<EvaluationCriteria[]>(initialCriteria);
-  const [evaluations, setEvaluations] = useState<Evaluation[]>(initialEvals);
+  const [agencies, setAgencies] = useState<Agency[]>(initialAgencies);
+  const [sales, setSales] = useState<Sale[]>(initialSales);
+  const [statements, setStatements] = useState<PaymentStatement[]>([]);
+  const [settings, setSettings] = useState<AppSettings>(initialSettings);
 
-  const addEmployee = useCallback((emp: Omit<Employee, 'id'>) => {
-    const id = `e${++empIdCounter}`;
-    setEmployees(prev => [...prev, { ...emp, id }]);
+  // ===== 代理店マスター =====
+  const addAgency = useCallback((data: Omit<Agency, 'id'>) => {
+    const id = `ag_${++agencyIdCounter}`;
+    setAgencies(prev => [...prev, { ...data, id }]);
     return id;
   }, []);
 
-  const updateEmployee = useCallback((id: string, updates: Partial<Employee>) => {
-    setEmployees(prev => prev.map(e => e.id === id ? { ...e, ...updates } : e));
+  const updateAgency = useCallback((id: string, updates: Partial<Agency>) => {
+    setAgencies(prev => prev.map(a => (a.id === id ? { ...a, ...updates } : a)));
   }, []);
 
-  const deleteEmployee = useCallback((id: string) => {
-    setEmployees(prev => prev.filter(e => e.id !== id));
+  const deleteAgency = useCallback((id: string) => {
+    setAgencies(prev => prev.filter(a => a.id !== id));
   }, []);
 
-  const createEvaluation = useCallback((employeeId: string, year: number, period: 'H1' | 'H2') => {
-    const id = `ev${++evalIdCounter}`;
-    const items: EvaluationItem[] = initialCriteria.map(c => ({
-      criteriaId: c.id,
-      selfRating: null,
-      managerRating: null,
-      selfComment: '',
-      managerComment: '',
-    }));
-    const newEval: Evaluation = {
-      id,
-      employeeId,
-      year,
-      period,
-      status: 'self_evaluation',
-      items,
-      goals: [],
-      overallSelfComment: '',
-      overallManagerComment: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    setEvaluations(prev => [...prev, newEval]);
+  // ===== 売上 =====
+  const addSale = useCallback((data: Omit<Sale, 'id'>) => {
+    const id = `s_${++saleIdCounter}`;
+    setSales(prev => [...prev, { ...data, id }]);
     return id;
   }, []);
 
-  const updateSelfEvaluation = useCallback((evalId: string, items: EvaluationItem[], overallComment: string) => {
-    setEvaluations(prev => prev.map(ev => {
-      if (ev.id !== evalId) return ev;
-      return { ...ev, items, overallSelfComment: overallComment, status: 'manager_evaluation', updatedAt: new Date().toISOString() };
-    }));
+  const addSales = useCallback((items: Omit<Sale, 'id'>[]) => {
+    setSales(prev => [
+      ...prev,
+      ...items.map(item => ({ ...item, id: `s_${++saleIdCounter}` })),
+    ]);
   }, []);
 
-  const updateManagerEvaluation = useCallback((evalId: string, items: EvaluationItem[], overallComment: string) => {
-    setEvaluations(prev => prev.map(ev => {
-      if (ev.id !== evalId) return ev;
-      return { ...ev, items, overallManagerComment: overallComment, status: 'completed', updatedAt: new Date().toISOString() };
-    }));
+  const updateSale = useCallback((id: string, updates: Partial<Sale>) => {
+    setSales(prev => prev.map(s => (s.id === id ? { ...s, ...updates } : s)));
   }, []);
 
-  const updateItemRating = useCallback((evalId: string, criteriaId: string, field: 'selfRating' | 'managerRating', value: RatingScale) => {
-    setEvaluations(prev => prev.map(ev => {
-      if (ev.id !== evalId) return ev;
-      const items = ev.items.map(item =>
-        item.criteriaId === criteriaId ? { ...item, [field]: value } : item
-      );
-      return { ...ev, items, updatedAt: new Date().toISOString() };
-    }));
+  const deleteSale = useCallback((id: string) => {
+    setSales(prev => prev.filter(s => s.id !== id));
   }, []);
 
-  const updateItemComment = useCallback((evalId: string, criteriaId: string, field: 'selfComment' | 'managerComment', value: string) => {
-    setEvaluations(prev => prev.map(ev => {
-      if (ev.id !== evalId) return ev;
-      const items = ev.items.map(item =>
-        item.criteriaId === criteriaId ? { ...item, [field]: value } : item
-      );
-      return { ...ev, items, updatedAt: new Date().toISOString() };
-    }));
+  // ===== 支払明細書 =====
+  /** 指定月のフィーを計算し、代理店ごとの支払明細書を生成（既存の同月分は置換） */
+  const generateStatements = useCallback((month: string) => {
+    setStatements(prev => {
+      const kept = prev.filter(st => st.month !== month);
+      const fees = computeMonthlyFees(agencies, sales, month);
+      const generated = fees
+        .filter(f => f.subtotal > 0)
+        .map(f => buildStatement(f, month, settings, ++statementIdCounter));
+      return [...kept, ...generated];
+    });
+  }, [agencies, sales, settings]);
+
+  const confirmStatement = useCallback((id: string) => {
+    setStatements(prev =>
+      prev.map(st =>
+        st.id === id ? { ...st, status: 'confirmed', confirmedAt: new Date().toISOString() } : st,
+      ),
+    );
   }, []);
 
-  const addGoal = useCallback((evalId: string, goal: Omit<Goal, 'id'>) => {
-    const id = `g${++goalIdCounter}`;
-    setEvaluations(prev => prev.map(ev => {
-      if (ev.id !== evalId) return ev;
-      return { ...ev, goals: [...ev.goals, { ...goal, id }], updatedAt: new Date().toISOString() };
-    }));
+  const deleteStatement = useCallback((id: string) => {
+    setStatements(prev => prev.filter(st => st.id !== id));
   }, []);
 
-  const updateGoal = useCallback((evalId: string, goalId: string, updates: Partial<Goal>) => {
-    setEvaluations(prev => prev.map(ev => {
-      if (ev.id !== evalId) return ev;
-      return {
-        ...ev,
-        goals: ev.goals.map(g => g.id === goalId ? { ...g, ...updates } : g),
-        updatedAt: new Date().toISOString(),
-      };
-    }));
+  // ===== 設定 =====
+  const updateSettings = useCallback((updates: Partial<AppSettings>) => {
+    setSettings(prev => ({ ...prev, ...updates }));
   }, []);
-
-  const deleteGoal = useCallback((evalId: string, goalId: string) => {
-    setEvaluations(prev => prev.map(ev => {
-      if (ev.id !== evalId) return ev;
-      return { ...ev, goals: ev.goals.filter(g => g.id !== goalId), updatedAt: new Date().toISOString() };
-    }));
-  }, []);
-
-  const updateOverallComment = useCallback((evalId: string, field: 'overallSelfComment' | 'overallManagerComment', value: string) => {
-    setEvaluations(prev => prev.map(ev => {
-      if (ev.id !== evalId) return ev;
-      return { ...ev, [field]: value, updatedAt: new Date().toISOString() };
-    }));
-  }, []);
-
-  const addDepartment = useCallback((name: string) => {
-    const id = `d${departments.length + 10}`;
-    setDepartments(prev => [...prev, { id, name }]);
-  }, [departments.length]);
 
   return {
-    departments,
-    employees,
-    criteria,
-    evaluations,
-    addEmployee,
-    updateEmployee,
-    deleteEmployee,
-    createEvaluation,
-    updateSelfEvaluation,
-    updateManagerEvaluation,
-    updateItemRating,
-    updateItemComment,
-    addGoal,
-    updateGoal,
-    deleteGoal,
-    updateOverallComment,
-    addDepartment,
+    agencies,
+    sales,
+    statements,
+    settings,
+    addAgency,
+    updateAgency,
+    deleteAgency,
+    addSale,
+    addSales,
+    updateSale,
+    deleteSale,
+    generateStatements,
+    confirmStatement,
+    deleteStatement,
+    updateSettings,
   };
 }
 

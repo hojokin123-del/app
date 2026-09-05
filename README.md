@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+# 代理店フィー管理システム
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+販売代理店制度における、毎月月末の代理店フィー（手数料）計算と支払明細書作成を自動化する Web アプリです。React + TypeScript + Vite で構築しています。
 
-Currently, two official plugins are available:
+## 主な機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### 1. 代理店マスター（`/agencies`）
+- 一次代理店・二次代理店の登録／編集／削除
+- 代理店ごとの**手数料率（％）**を個別に登録
+- 二次代理店には所属する一次代理店を紐付け
+- 振込先口座・担当者情報を管理
 
-## React Compiler
+### 2. 売上データ（`/sales`）
+- 研修売上の登録・一覧・月次フィルタ
+- 「研修に関する売上」フラグでフィー計算対象を管理
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### 3. スプレッドシート連携（`/sales/import`）
+- 売上のベースとなるスプレッドシート（例：「Leap代理店リスト」「MMH精算リスト」）から、
+  `二次代理店・顧客先・入金日・研修費用` を含む範囲をコピー＆ペーストで取り込み
+- **研修に関する行を自動抽出**（研修費用列・研修キーワード判定）し、代理店マスターと突合して売上へ転記
+- カンマ区切り／タブ区切り（スプレッドシートから直接コピー）に対応
 
-## Expanding the ESLint configuration
+### 4. フィー計算（`/fees`）
+- 対象月を選ぶと**オーバーライド型**で代理店別フィーを自動計算
+- 代理店ごとの明細（直販・販売・オーバーライド）を展開表示
+- ワンクリックで支払明細書を作成
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### 5. 支払明細書（`/statements`）
+- 代理店別・月別の支払明細書を一覧管理
+- 明細書は手数料小計＋消費税−振込手数料＝差引支払額を自動計算
+- 印刷／PDF 出力、確定処理に対応
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 6. 設定（`/settings`）
+- 自社名・消費税率・標準振込手数料・支払日
+- 研修判定キーワードの追加・削除
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## フィー計算方式（オーバーライド型）
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- 二次代理店が販売した研修費用に対し、**二次代理店は自社率**を計上
+- 同じ研修費用に対し、所属する**一次代理店は一次率**をオーバーライドとして計上
+- 一次代理店の直販は**一次率のみ**を計上
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+例）研修費用 3,000,000 円・一次率 55%・二次率 45% の場合
+→ 一次代理店：1,650,000 円（オーバーライド）／二次代理店：1,350,000 円（販売フィー）
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 初期データについて
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+初期データは Google スプレッドシート「石川決済（西河マネジメントセンター）」の
+シート「Leap代理店リスト」「MMH精算リスト」から、研修（研修費用）行を転記して作成しています。
+本アプリはブラウザ上のインメモリ状態で動作するデモ実装です（リロードで初期状態に戻ります）。
+
+## 開発
+
+```bash
+npm install
+npm run dev     # 開発サーバ
+npm run build   # 型チェック + 本番ビルド
+npm run lint    # ESLint
 ```

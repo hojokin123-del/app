@@ -572,6 +572,49 @@ body { background: var(--bg); min-height: 100vh; }
 .error-msg { color: var(--danger); font-size: 13px; margin-top: -8px; }
 .empty-state { text-align: center; color: var(--text-muted); padding: 32px; }
 
+/* 支払明細書 */
+.statement-sheet { max-width: 820px; margin: 0 auto; padding: 40px 48px; }
+.statement-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  border-bottom: 3px double var(--text); padding-bottom: 16px; margin-bottom: 24px;
+}
+.statement-title { font-size: 26px; font-weight: 700; letter-spacing: 0.15em; }
+.statement-meta { text-align: right; font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+.statement-parties { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; gap: 24px; }
+.statement-to { flex: 1; }
+.statement-to-name { font-size: 20px; font-weight: 700; border-bottom: 2px solid var(--text); display: inline-block; padding-bottom: 4px; margin-bottom: 6px; }
+.statement-from { text-align: right; font-size: 14px; }
+.statement-total-box {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--primary-light); border: 1px solid var(--primary);
+  border-radius: 10px; padding: 16px 24px; margin-bottom: 24px;
+  font-weight: 600; color: var(--primary-dark);
+}
+.statement-total-amount { font-size: 28px; font-weight: 700; }
+.statement-table { font-size: 13px; border: 1px solid var(--border); }
+.statement-table th { background: #f1f5f9; }
+.statement-summary { margin: 20px 0 20px auto; max-width: 340px; }
+.statement-summary-row { display: flex; justify-content: space-between; padding: 8px 4px; font-size: 14px; border-bottom: 1px solid var(--border); }
+.statement-summary-total {
+  border-top: 2px solid var(--text); border-bottom: 2px solid var(--text);
+  font-weight: 700; font-size: 18px; margin-top: 4px;
+}
+.statement-bank { background: var(--bg); border-radius: 10px; padding: 16px 20px; margin-top: 8px; }
+.statement-confirmed {
+  position: absolute; top: 40px; right: 48px;
+  color: var(--danger); border: 3px solid var(--danger); border-radius: 8px;
+  padding: 6px 16px; font-weight: 700; transform: rotate(-8deg); opacity: 0.7;
+}
+
+/* 印刷 */
+@media print {
+  .sidebar, .no-print, .btn { display: none !important; }
+  .main-content { margin-left: 0 !important; }
+  .page { padding: 0 !important; }
+  .statement-sheet { border: none !important; box-shadow: none !important; max-width: none; padding: 0; }
+  body { background: #fff; }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }

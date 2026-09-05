@@ -1,200 +1,169 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { Users, CheckCircle, Clock, AlertCircle, TrendingUp } from 'lucide-react';
+import {
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  ComposedChart, Line, Cell,
+} from 'recharts';
+import { Building2, Receipt, Calculator, TrendingUp } from 'lucide-react';
 import { useApp } from '../context/AppContext';
-import { STATUS_LABELS, CATEGORY_LABELS, PERIOD_LABELS, type EvaluationStatus } from '../types';
+import { computeMonthlyFees } from '../lib/feeCalc';
+import { TIER_LABELS } from '../types';
+import { formatYen, formatMonth, formatDate, listMonths } from '../lib/format';
 
-const STATUS_ICONS: Record<EvaluationStatus, typeof CheckCircle> = {
-  not_started: AlertCircle,
-  self_evaluation: Clock,
-  manager_evaluation: Clock,
-  completed: CheckCircle,
-};
-
-const STATUS_COLORS: Record<EvaluationStatus, string> = {
-  not_started: '#94a3b8',
-  self_evaluation: '#f59e0b',
-  manager_evaluation: '#3b82f6',
-  completed: '#10b981',
-};
+const YEN_M = (v: number) => `${Math.round(v / 10000).toLocaleString('ja-JP')}万`;
 
 export function Dashboard() {
-  const { employees, evaluations, criteria, departments } = useApp();
+  const { agencies, sales } = useApp();
+  const months = useMemo(() => listMonths(sales), [sales]);
+  const currentMonth = months[0] ?? '';
 
-  const currentYear = 2025;
-  const currentPeriod = 'H2';
+  const primaryCount = agencies.filter(a => a.tier === 'primary').length;
+  const secondaryCount = agencies.filter(a => a.tier === 'secondary').length;
 
-  const currentEvals = evaluations.filter(e => e.year === currentYear && e.period === currentPeriod);
+  // 当月
+  const currentFees = useMemo(
+    () => (currentMonth ? computeMonthlyFees(agencies, sales, currentMonth) : []),
+    [agencies, sales, currentMonth],
+  );
+  const currentBase = sales.filter(s => s.month === currentMonth && s.isTraining).reduce((s, x) => s + x.amount, 0);
+  const currentFeeTotal = currentFees.reduce((s, f) => s + f.subtotal, 0);
 
-  const stats = useMemo(() => {
-    const statusCount = { not_started: 0, self_evaluation: 0, manager_evaluation: 0, completed: 0 };
-    currentEvals.forEach(e => { statusCount[e.status]++; });
-    return statusCount;
-  }, [currentEvals]);
-
-  const completedEvals = evaluations.filter(e => e.status === 'completed');
-
-  const categoryAverages = useMemo(() => {
-    const groups: Record<string, { sum: number; count: number }> = {};
-    criteria.forEach(c => { groups[c.category] = { sum: 0, count: 0 }; });
-
-    completedEvals.forEach(ev => {
-      ev.items.forEach(item => {
-        const c = criteria.find(cr => cr.id === item.criteriaId);
-        if (c && item.managerRating) {
-          groups[c.category].sum += (6 - item.managerRating); // invert so 5=best
-          groups[c.category].count++;
-        }
-      });
+  // 月別推移（古い順）
+  const trend = useMemo(() => {
+    return [...months].reverse().map(m => {
+      const base = sales.filter(s => s.month === m && s.isTraining).reduce((s, x) => s + x.amount, 0);
+      const fee = computeMonthlyFees(agencies, sales, m).reduce((s, f) => s + f.subtotal, 0);
+      return { month: formatMonth(m), 研修売上: base, フィー: fee };
     });
+  }, [months, sales, agencies]);
 
-    return Object.entries(groups).map(([cat, { sum, count }]) => ({
-      category: CATEGORY_LABELS[cat as keyof typeof CATEGORY_LABELS],
-      value: count > 0 ? parseFloat((sum / count).toFixed(1)) : 0,
-      fullMark: 5,
-    }));
-  }, [completedEvals, criteria]);
+  // 当月 代理店別フィー
+  const byAgency = useMemo(
+    () => currentFees.map(f => ({
+      name: agencies.find(a => a.id === f.agencyId)?.name ?? '',
+      fee: f.subtotal,
+      tier: agencies.find(a => a.id === f.agencyId)?.tier ?? 'secondary',
+    })),
+    [currentFees, agencies],
+  );
 
-  const deptStats = useMemo(() => {
-    return departments.map(dept => {
-      const deptEmps = employees.filter(e => e.departmentId === dept.id);
-      const deptEvals = currentEvals.filter(e => deptEmps.some(emp => emp.id === e.employeeId));
-      const completed = deptEvals.filter(e => e.status === 'completed').length;
-      return { name: dept.name.replace('部', ''), total: deptEmps.length, completed, progress: deptEmps.length > 0 ? Math.round((completed / deptEmps.length) * 100) : 0 };
-    }).filter(d => d.total > 0);
-  }, [departments, employees, currentEvals]);
-
-  const recentEvals = [...evaluations]
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    .slice(0, 5);
+  const recentSales = useMemo(
+    () => [...sales].filter(s => s.isTraining).sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 6),
+    [sales],
+  );
 
   return (
     <div className="page">
       <div className="page-header">
         <h1>ダッシュボード</h1>
-        <div className="period-badge">{currentYear}年度 {PERIOD_LABELS[currentPeriod as 'H1' | 'H2']}</div>
+        {currentMonth && <div className="period-badge">{formatMonth(currentMonth)}</div>}
       </div>
 
-      {/* KPI Cards */}
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#eff6ff' }}>
-            <Users size={24} color="#3b82f6" />
-          </div>
+          <div className="stat-icon" style={{ background: '#eef2ff' }}><Building2 size={24} color="#6366f1" /></div>
           <div className="stat-body">
-            <div className="stat-value">{employees.length}</div>
-            <div className="stat-label">従業員数</div>
+            <div className="stat-value">{agencies.length}</div>
+            <div className="stat-label">代理店数（一次{primaryCount}／二次{secondaryCount}）</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#f0fdf4' }}>
-            <CheckCircle size={24} color="#10b981" />
-          </div>
+          <div className="stat-icon" style={{ background: '#eff6ff' }}><Receipt size={24} color="#3b82f6" /></div>
           <div className="stat-body">
-            <div className="stat-value">{stats.completed}</div>
-            <div className="stat-label">評価完了</div>
+            <div className="stat-value" style={{ fontSize: 24 }}>{formatYen(currentBase)}</div>
+            <div className="stat-label">当月 研修売上</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#fffbeb' }}>
-            <Clock size={24} color="#f59e0b" />
-          </div>
+          <div className="stat-icon" style={{ background: '#f0fdf4' }}><Calculator size={24} color="#10b981" /></div>
           <div className="stat-body">
-            <div className="stat-value">{stats.self_evaluation + stats.manager_evaluation}</div>
-            <div className="stat-label">評価進行中</div>
+            <div className="stat-value" style={{ fontSize: 24 }}>{formatYen(currentFeeTotal)}</div>
+            <div className="stat-label">当月 フィー総額</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{ background: '#faf5ff' }}>
-            <TrendingUp size={24} color="#8b5cf6" />
-          </div>
+          <div className="stat-icon" style={{ background: '#faf5ff' }}><TrendingUp size={24} color="#8b5cf6" /></div>
           <div className="stat-body">
-            <div className="stat-value">
-              {employees.length > 0 ? Math.round((stats.completed / employees.length) * 100) : 0}%
-            </div>
-            <div className="stat-label">完了率</div>
+            <div className="stat-value" style={{ fontSize: 24 }}>{currentFees.length}社</div>
+            <div className="stat-label">当月 支払対象</div>
           </div>
         </div>
       </div>
 
       <div className="dashboard-grid">
-        {/* Radar Chart */}
         <div className="card">
-          <div className="card-header">
-            <h2>評価カテゴリ別平均（完了済み）</h2>
-          </div>
+          <div className="card-header"><h2>研修売上・フィー 月別推移</h2></div>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={260}>
-              <RadarChart data={categoryAverages}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="category" tick={{ fontSize: 12 }} />
-                <Radar name="平均評価" dataKey="value" stroke="#6366f1" fill="#6366f1" fillOpacity={0.3} />
-              </RadarChart>
+            <ResponsiveContainer width="100%" height={280}>
+              <ComposedChart data={trend}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis tickFormatter={YEN_M} tick={{ fontSize: 11 }} />
+                <Tooltip formatter={(v) => formatYen(Number(v))} />
+                <Legend />
+                <Bar dataKey="研修売上" fill="#c7d2fe" radius={[4, 4, 0, 0]} />
+                <Line dataKey="フィー" stroke="#6366f1" strokeWidth={2} dot={{ r: 3 }} />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Department Progress */}
         <div className="card">
-          <div className="card-header">
-            <h2>部署別評価進捗</h2>
-          </div>
+          <div className="card-header"><h2>当月 代理店別フィー</h2></div>
           <div className="chart-container">
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={deptStats}>
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart data={byAgency} layout="vertical" margin={{ left: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                <YAxis unit="%" />
-                <Tooltip formatter={(v) => `${v}%`} />
-                <Bar dataKey="progress" fill="#6366f1" radius={[4, 4, 0, 0]} name="完了率" />
+                <XAxis type="number" tickFormatter={YEN_M} tick={{ fontSize: 11 }} />
+                <YAxis type="category" dataKey="name" width={80} tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(v) => formatYen(Number(v))} />
+                <Bar dataKey="fee" name="フィー" radius={[0, 4, 4, 0]}>
+                  {byAgency.map((d, i) => (
+                    <Cell key={i} fill={d.tier === 'primary' ? '#6366f1' : '#a5b4fc'} />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Status Summary */}
         <div className="card">
           <div className="card-header">
-            <h2>評価ステータス</h2>
+            <h2>最近の研修売上</h2>
+            <Link to="/sales" className="btn btn-secondary btn-sm">すべて見る</Link>
           </div>
-          <div className="status-list">
-            {(Object.entries(stats) as [EvaluationStatus, number][]).map(([status, count]) => {
-              const Icon = STATUS_ICONS[status];
+          <div className="activity-list">
+            {recentSales.map(s => {
+              const agency = agencies.find(a => a.id === s.agencyId);
               return (
-                <div key={status} className="status-item">
-                  <div className="status-icon-wrap" style={{ color: STATUS_COLORS[status] }}>
-                    <Icon size={18} />
+                <div key={s.id} className="activity-item">
+                  <div className="avatar avatar-sm">{agency?.name.slice(0, 2) ?? '--'}</div>
+                  <div className="activity-body">
+                    <div className="activity-name">{s.customerName}｜{s.productName}</div>
+                    <div className="activity-meta">{agency?.name}・{formatDate(s.date)}</div>
                   </div>
-                  <div className="status-label">{STATUS_LABELS[status]}</div>
-                  <div className="status-count" style={{ color: STATUS_COLORS[status] }}>{count}件</div>
+                  <div className="activity-status">{formatYen(s.amount)}</div>
                 </div>
               );
             })}
+            {recentSales.length === 0 && <div className="empty-state">研修売上がありません</div>}
           </div>
         </div>
 
-        {/* Recent Activity */}
         <div className="card">
-          <div className="card-header">
-            <h2>最近の評価活動</h2>
-          </div>
+          <div className="card-header"><h2>代理店一覧</h2></div>
           <div className="activity-list">
-            {recentEvals.map(ev => {
-              const emp = employees.find(e => e.id === ev.employeeId);
-              if (!emp) return null;
-              const Icon = STATUS_ICONS[ev.status];
+            {agencies.map(a => {
+              const parent = agencies.find(p => p.id === a.parentId);
               return (
-                <Link to={`/evaluations/${ev.id}`} key={ev.id} className="activity-item">
-                  <div className="avatar avatar-sm">{emp.avatarInitials}</div>
+                <Link key={a.id} to={`/agencies/${a.id}`} className="activity-item">
                   <div className="activity-body">
-                    <div className="activity-name">{emp.name}</div>
-                    <div className="activity-meta">{ev.year}年度{PERIOD_LABELS[ev.period]}</div>
+                    <div className="activity-name">{a.name}</div>
+                    <div className="activity-meta">
+                      {TIER_LABELS[a.tier]}{parent ? `・所属：${parent.name}` : ''}
+                    </div>
                   </div>
-                  <div className="activity-status" style={{ color: STATUS_COLORS[ev.status] }}>
-                    <Icon size={16} />
-                    <span>{STATUS_LABELS[ev.status]}</span>
-                  </div>
+                  <div className="activity-status" style={{ color: 'var(--primary)' }}>{a.feeRate}%</div>
                 </Link>
               );
             })}

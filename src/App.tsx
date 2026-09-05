@@ -2,12 +2,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
-import { Employees } from './pages/Employees';
-import { EmployeeDetail } from './pages/EmployeeDetail';
-import { Evaluations } from './pages/Evaluations';
-import { EvaluationDetail } from './pages/EvaluationDetail';
-import { NewEvaluation } from './pages/NewEvaluation';
-import { Criteria } from './pages/Criteria';
+import { Agencies } from './pages/Agencies';
+import { AgencyDetail } from './pages/AgencyDetail';
+import { Sales } from './pages/Sales';
+import { SalesImport } from './pages/SalesImport';
+import { FeeCalculation } from './pages/FeeCalculation';
+import { PaymentStatements } from './pages/PaymentStatements';
+import { StatementDetail } from './pages/StatementDetail';
 import { Settings } from './pages/Settings';
 import './index.css';
 
@@ -18,12 +19,13 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
-            <Route path="employees" element={<Employees />} />
-            <Route path="employees/:id" element={<EmployeeDetail />} />
-            <Route path="evaluations" element={<Evaluations />} />
-            <Route path="evaluations/new" element={<NewEvaluation />} />
-            <Route path="evaluations/:id" element={<EvaluationDetail />} />
-            <Route path="criteria" element={<Criteria />} />
+            <Route path="agencies" element={<Agencies />} />
+            <Route path="agencies/:id" element={<AgencyDetail />} />
+            <Route path="sales" element={<Sales />} />
+            <Route path="sales/import" element={<SalesImport />} />
+            <Route path="fees" element={<FeeCalculation />} />
+            <Route path="statements" element={<PaymentStatements />} />
+            <Route path="statements/:id" element={<StatementDetail />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

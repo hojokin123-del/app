@@ -1,11 +1,12 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Users, ClipboardList, BarChart2, Settings, Star } from 'lucide-react';
+import { LayoutDashboard, Building2, Receipt, Calculator, FileText, Settings } from 'lucide-react';
 
 const navItems = [
-  { to: '/', label: 'ダッシュボード', icon: BarChart2, end: true },
-  { to: '/employees', label: '従業員管理', icon: Users },
-  { to: '/evaluations', label: '評価管理', icon: ClipboardList },
-  { to: '/criteria', label: '評価項目', icon: Star },
+  { to: '/', label: 'ダッシュボード', icon: LayoutDashboard, end: true },
+  { to: '/agencies', label: '代理店マスター', icon: Building2 },
+  { to: '/sales', label: '売上データ', icon: Receipt },
+  { to: '/fees', label: 'フィー計算', icon: Calculator },
+  { to: '/statements', label: '支払明細書', icon: FileText },
   { to: '/settings', label: '設定', icon: Settings },
 ];
 
@@ -15,8 +16,8 @@ export function Layout() {
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="logo">
-            <ClipboardList size={24} />
-            <span>人事評価システム</span>
+            <Calculator size={24} />
+            <span>代理店フィー管理</span>
           </div>
         </div>
         <nav className="sidebar-nav">
@@ -32,7 +33,7 @@ export function Layout() {
             <div className="avatar avatar-sm">管</div>
             <div className="user-info">
               <div className="user-name">管理者</div>
-              <div className="user-role">システム管理者</div>
+              <div className="user-role">経理担当</div>
             </div>
           </div>
         </div>
