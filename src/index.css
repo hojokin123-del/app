@@ -572,6 +572,128 @@ body { background: var(--bg); min-height: 100vh; }
 .error-msg { color: var(--danger); font-size: 13px; margin-top: -8px; }
 .empty-state { text-align: center; color: var(--text-muted); padding: 32px; }
 
+/* ===== KPI経営管理モジュール ===== */
+
+/* Sidebar section label */
+.nav-section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(199, 210, 254, 0.55);
+  padding: 14px 18px 6px;
+}
+
+/* Alert banner */
+.kpi-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+.kpi-alert a { color: #b91c1c; font-weight: 700; }
+
+/* Horizontally scrollable table wrapper */
+.kpi-table-wrap { overflow-x: auto; }
+
+/* Dense grid tables */
+.kpi-grid { font-size: 13px; min-width: 900px; }
+.kpi-grid th, .kpi-grid td { padding: 6px 8px; white-space: nowrap; }
+.kpi-grid th { text-transform: none; letter-spacing: 0; }
+
+.daily-table { font-size: 13px; }
+.daily-table th { text-transform: none; letter-spacing: 0; }
+.daily-table td { padding: 8px; vertical-align: top; }
+
+/* Sticky first column */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--card-bg);
+}
+.kpi-grid thead .sticky-col { background: var(--bg); z-index: 3; }
+.kpi-grid .row-name { font-weight: 600; }
+.kpi-grid .row-name .unit { color: var(--text-muted); font-weight: 400; font-size: 11px; }
+.kpi-grid .row-name.indent { padding-left: 20px; font-weight: 500; }
+
+/* Group / derived rows */
+.group-row td { background: #eef2ff; font-weight: 700; color: var(--primary-dark); font-size: 12px; }
+.group-row .sticky-col { background: #eef2ff; }
+.derived-row td { background: #f8fafc; color: var(--text-muted); }
+.derived-row .sticky-col { background: #f8fafc; }
+.calc-row td { background: #f1f5f9; font-weight: 600; }
+.calc-row .sticky-col { background: #f1f5f9; }
+.closing-row td { background: #ecfdf5; }
+.closing-row .sticky-col { background: #ecfdf5; }
+
+/* Editable cells */
+.cell-input {
+  width: 100%;
+  min-width: 64px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 5px 7px;
+  font-size: 13px;
+  text-align: right;
+  background: #fffdf5;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+}
+.cell-input:hover { border-color: var(--border); }
+.cell-input:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 2px rgba(99,102,241,0.12); }
+.cell-input.target { background: #fef9c3; font-weight: 600; }
+.cell-input + .cell-input { margin-top: 4px; }
+
+.cell-textarea {
+  width: 100%;
+  min-width: 140px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 5px 7px;
+  font-size: 13px;
+  background: #fffdf5;
+  color: var(--text);
+  outline: none;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 38px;
+  line-height: 1.4;
+}
+.cell-textarea:hover { border-color: var(--border); }
+.cell-textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 2px rgba(99,102,241,0.12); }
+
+.cell-select {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--card-bg);
+  cursor: pointer;
+  outline: none;
+}
+.cell-select.st-todo { color: #64748b; }
+.cell-select.st-doing { color: #2563eb; background: #eff6ff; }
+.cell-select.st-done { color: #059669; background: #ecfdf5; }
+.cell-select.st-hold { color: #b45309; background: #fffbeb; }
+
+/* Calculated (read-only) cells */
+.calc-cell { text-align: right; font-variant-numeric: tabular-nums; color: var(--text); }
+.calc-cell.inline { display: inline-block; padding: 5px 7px; }
+.calc-cell.strong { font-weight: 700; }
+.calc-cell.neg { color: var(--danger); }
+.ach-good { color: #059669; font-weight: 700; }
+.ach-mid { color: #d97706; font-weight: 700; }
+.ach-low { color: #dc2626; font-weight: 700; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
