@@ -8,6 +8,7 @@ export function KpiProvider({ children }: { children: ReactNode }) {
   return <KpiContext.Provider value={store}>{children}</KpiContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useKpi() {
   const ctx = useContext(KpiContext);
   if (!ctx) throw new Error('useKpi must be used within KpiProvider');

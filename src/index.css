@@ -574,16 +574,6 @@ body { background: var(--bg); min-height: 100vh; }
 
 /* ===== KPI経営管理モジュール ===== */
 
-/* Sidebar section label */
-.nav-section-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(199, 210, 254, 0.55);
-  padding: 14px 18px 6px;
-}
-
 /* Alert banner */
 .kpi-alert {
   display: flex;

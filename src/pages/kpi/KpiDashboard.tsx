@@ -74,7 +74,7 @@ export function KpiDashboard() {
           <AlertTriangle size={18} />
           <span>
             資金ショートの恐れ：{shortfallMonths.join('・')} の月末残高がマイナスです。
-            <Link to="/kpi/cashflow"> 資金繰り表を確認</Link>
+            <Link to="/cashflow"> 資金繰り表を確認</Link>
           </span>
         </div>
       )}
