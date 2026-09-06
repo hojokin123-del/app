@@ -70,7 +70,7 @@ export function seedKpiData(fiscalYear: number): KpiData {
     { id: 's4', area: '業務', item: '定型業務のマニュアル化・チェックリスト', owner: '佐藤', status: '進行中', progress: 0.3, deadline: `${fiscalYear}-08-31`, memo: '入社1週間で回せる状態が目標' },
     { id: 's5', area: '業務', item: '日次・週次の報告フォーマット統一', owner: '佐藤', status: '完了', progress: 1, deadline: `${fiscalYear}-04-30`, memo: '本ツールで運用開始' },
     { id: 's6', area: '組織', item: '役割分担・権限委譲ルールの明文化', owner: '', status: '未着手', progress: 0, deadline: `${fiscalYear}-10-31`, memo: '自走化の要。決裁範囲を定義' },
-    { id: 's7', area: '組織', item: 'KPI連動の評価・振り返りの仕組み', owner: '', status: '進行中', progress: 0.2, deadline: `${fiscalYear}-09-30`, memo: '' },
+    { id: 's7', area: '組織', item: 'KPI連動の目標設定・ふりかえりの仕組み', owner: '', status: '進行中', progress: 0.2, deadline: `${fiscalYear}-09-30`, memo: '' },
     { id: 's8', area: '数値', item: '月次でKPI・資金繰りをレビューする会議体', owner: '経営', status: '進行中', progress: 0.5, deadline: `${fiscalYear}-05-31`, memo: '本ツールを用いた月次会議を定例化' },
   ];
 
