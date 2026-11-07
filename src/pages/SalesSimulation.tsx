@@ -13,6 +13,8 @@ interface SimulationInputs {
   trainingSga: number;          // 販管費（研修）
   subsidySga: number;           // 販管費（補助金業務）
   aiVideoSga: number;           // 販管費（AI動画作成業務）
+  grantBaseFee: number;         // 販管費（助成金申請基本料）
+  grantCommission: number;      // 販管費（助成金申請手数料）
 }
 
 const DEFAULT_INPUTS: SimulationInputs = {
@@ -25,6 +27,8 @@ const DEFAULT_INPUTS: SimulationInputs = {
   trainingSga: 3_600_000,
   subsidySga: 1_200_000,
   aiVideoSga: 1_200_000,
+  grantBaseFee: 500_000,
+  grantCommission: 1_500_000,
 };
 
 const MONTHS = Array.from({ length: 12 }, (_, i) => `${i + 1}月`);
@@ -46,6 +50,8 @@ interface MonthRow {
   trainingSga: number;
   subsidySga: number;
   aiVideoSga: number;
+  grantBaseFee: number;
+  grantCommission: number;
   sga: number;
   operatingProfit: number;
   cumulativeProfit: number;
@@ -65,7 +71,7 @@ function simulate(inputs: SimulationInputs): MonthRow[] {
     const revenue = inputs.trainingRevenue + inputs.subsidyRevenue + inputs.aiVideoRevenue;
     const cost = trainingCost + subsidyCost + aiVideoCost;
     const gross = revenue - cost;
-    const sga = inputs.trainingSga + inputs.subsidySga + inputs.aiVideoSga;
+    const sga = inputs.trainingSga + inputs.subsidySga + inputs.aiVideoSga + inputs.grantBaseFee + inputs.grantCommission;
     const operatingProfit = gross - sga;
     cumulative += operatingProfit;
     return {
@@ -75,6 +81,7 @@ function simulate(inputs: SimulationInputs): MonthRow[] {
       aiVideoRevenue: inputs.aiVideoRevenue, aiVideoCost, aiVideoGross,
       revenue, cost, gross,
       trainingSga: inputs.trainingSga, subsidySga: inputs.subsidySga, aiVideoSga: inputs.aiVideoSga,
+      grantBaseFee: inputs.grantBaseFee, grantCommission: inputs.grantCommission,
       sga, operatingProfit, cumulativeProfit: cumulative,
     };
   });
@@ -102,6 +109,8 @@ const ROWS: RowDef[] = [
   { key: 'trainingSga', label: '販管費（研修）', level: 'item' },
   { key: 'subsidySga', label: '販管費（補助金業務）', level: 'item' },
   { key: 'aiVideoSga', label: '販管費（AI動画作成業務）', level: 'item' },
+  { key: 'grantBaseFee', label: '販管費（助成金申請基本料）', level: 'item' },
+  { key: 'grantCommission', label: '販管費（助成金申請手数料）', level: 'item' },
   { key: 'sga', label: '販売管理費 合計', level: 'total' },
   { key: 'operatingProfit', label: '営業利益', level: 'profit' },
   { key: 'cumulativeProfit', label: '営業利益 累計', level: 'item' },
@@ -117,6 +126,8 @@ const FIELDS: { key: keyof SimulationInputs; label: string; unit: '円' | '%'; g
   { key: 'trainingSga', label: '販管費（研修）', unit: '円', group: '販売管理費（人件費等・月）' },
   { key: 'subsidySga', label: '販管費（補助金業務）', unit: '円', group: '販売管理費（人件費等・月）' },
   { key: 'aiVideoSga', label: '販管費（AI動画作成業務）', unit: '円', group: '販売管理費（人件費等・月）' },
+  { key: 'grantBaseFee', label: '助成金申請基本料', unit: '円', group: '販売管理費（人件費等・月）' },
+  { key: 'grantCommission', label: '助成金申請手数料', unit: '円', group: '販売管理費（人件費等・月）' },
 ];
 
 export function SalesSimulation() {
