@@ -9,6 +9,7 @@ import { EvaluationDetail } from './pages/EvaluationDetail';
 import { NewEvaluation } from './pages/NewEvaluation';
 import { Criteria } from './pages/Criteria';
 import { Settings } from './pages/Settings';
+import { SalesSimulation } from './pages/SalesSimulation';
 import './index.css';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="evaluations/new" element={<NewEvaluation />} />
             <Route path="evaluations/:id" element={<EvaluationDetail />} />
             <Route path="criteria" element={<Criteria />} />
+            <Route path="sales-simulation" element={<SalesSimulation />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

@@ -576,3 +576,23 @@ body { background: var(--bg); min-height: 100vh; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Sales Simulation */
+.sim-stat-value { font-size: 22px; }
+.sim-inputs { padding: 16px 20px; display: flex; flex-direction: column; gap: 16px; }
+.sim-input-group h3 { font-size: 13px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+.sim-input-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.sim-field { display: flex; flex-direction: column; gap: 4px; font-size: 13px; margin: 0; }
+.sim-input-wrap { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #fff; }
+.sim-input-wrap:focus-within { border-color: var(--primary); }
+.sim-input-wrap input { flex: 1; border: none; outline: none; padding: 8px 10px; font-size: 14px; text-align: right; min-width: 0; }
+.sim-unit { padding: 0 10px; color: var(--text-muted); font-size: 13px; background: var(--bg); align-self: stretch; display: flex; align-items: center; }
+.sim-table-wrap { overflow-x: auto; }
+.sim-table th, .sim-table td { white-space: nowrap; text-align: right; font-variant-numeric: tabular-nums; }
+.sim-table th:first-child, .sim-table td:first-child { text-align: left; position: sticky; left: 0; background: var(--card-bg); z-index: 1; }
+.sim-row-item td:first-child { padding-left: 28px; color: var(--text-muted); }
+.sim-row-total td { font-weight: 600; background: var(--bg); }
+.sim-row-total td:first-child { background: var(--bg); }
+.sim-row-profit td { font-weight: 700; background: var(--primary-light); color: var(--primary-dark); }
+.sim-row-profit td:first-child { background: var(--primary-light); }
+.sim-negative { color: var(--danger) !important; }
