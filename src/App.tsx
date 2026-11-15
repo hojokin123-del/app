@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
-import { Operations } from './pages/Operations';
+import { SalesDashboard } from './pages/SalesDashboard';
+import { SalesProvider } from './context/SalesContext';
 import { Employees } from './pages/Employees';
 import { EmployeeDetail } from './pages/EmployeeDetail';
 import { Evaluations } from './pages/Evaluations';
@@ -15,11 +16,12 @@ import './index.css';
 export default function App() {
   return (
     <AppProvider>
+      <SalesProvider>
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
-            <Route path="operations" element={<Operations />} />
+            <Route path="sales" element={<SalesDashboard />} />
             <Route path="employees" element={<Employees />} />
             <Route path="employees/:id" element={<EmployeeDetail />} />
             <Route path="evaluations" element={<Evaluations />} />
@@ -30,6 +32,7 @@ export default function App() {
           </Route>
         </Routes>
       </BrowserRouter>
+      </SalesProvider>
     </AppProvider>
   );
 }
