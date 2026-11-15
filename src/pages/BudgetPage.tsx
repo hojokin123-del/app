@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { Info } from 'lucide-react';
-import { useSales } from '../../context/SalesContext';
-import { FISCAL_MONTHS } from '../../data/salesMockData';
-import { RateBadge } from './RateBadge';
-import { ALL, aggregateByMonth, filterByRep, monthLabel, monthState, pct, rateLevel, summarize, withCumulative, yen } from './salesUtils';
+import { useSales } from '../store/salesStore';
+import { FISCAL_MONTHS } from '../data/calendar';
+import { PageHeader } from './sales/PageHeader';
+import { RateBadge } from './sales/RateBadge';
+import { ALL, aggregateByMonth, filterByRep, monthLabel, monthState, rateLevel, summarize, withCumulative, yen, rateOf } from './sales/salesUtils';
 
 function NumCell({ value, onChange, disabled }: { value: number | null; onChange: (v: number | null) => void; disabled?: boolean }) {
   if (disabled) return <span>{value == null ? '—' : value.toLocaleString()}</span>;
@@ -18,8 +19,8 @@ function NumCell({ value, onChange, disabled }: { value: number | null; onChange
   );
 }
 
-export function BudgetTab({ repId }: { repId: string }) {
-  const { reps, records, updateRecord } = useSales();
+export function BudgetPage() {
+  const { reps, records, updateRecord, selectedRepId: repId } = useSales();
   const editable = repId !== ALL;
   const months = useMemo(() => withCumulative(aggregateByMonth(filterByRep(records, repId))), [records, repId]);
   const s = summarize(months);
@@ -30,7 +31,8 @@ export function BudgetTab({ repId }: { repId: string }) {
   })), [reps, records]);
 
   return (
-    <>
+    <div className="page">
+      <PageHeader title="予実管理" />
       <div className="card">
         <div className="card-header">
           <h2>月別 予実表（単位：万円）</h2>
@@ -64,10 +66,10 @@ export function BudgetTab({ repId }: { repId: string }) {
                       <NumCell value={m.forecast} disabled={!editable || m.state === 'closed'} onChange={v => updateRecord(repId, m.month, 'forecast', v)} />
                     </td>
                     <td className={`num ${diff < 0 ? 'text-critical' : 'text-good'}`}>{diff >= 0 ? '+' : ''}{diff.toLocaleString()}</td>
-                    <td className="num"><RateBadge rate={pct(m.landing, m.budget)} /></td>
+                    <td className="num"><RateBadge rate={rateOf(m.landing, m.budget)} /></td>
                     <td className="num">{m.cumBudget.toLocaleString()}</td>
                     <td className="num">{m.cumLanding.toLocaleString()}</td>
-                    <td className="num"><RateBadge rate={pct(m.cumLanding, m.cumBudget)} /></td>
+                    <td className="num"><RateBadge rate={rateOf(m.cumLanding, m.cumBudget)} /></td>
                   </tr>
                 );
               })}
@@ -115,14 +117,14 @@ export function BudgetTab({ repId }: { repId: string }) {
                   <tr key={rep.id} className={repId === rep.id ? 'sales-current-row' : ''}>
                     <td className="nowrap">{rep.name}</td>
                     {ms.map(m => {
-                      const rate = pct(m.landing, m.budget);
+                      const rate = rateOf(m.landing, m.budget);
                       return (
                         <td
                           key={m.month}
-                          className={`num heat-cell heat-${rateLevel(rate)} ${monthState(m.month) !== 'closed' ? 'is-forecast' : ''}`}
+                          className={`num heat-cell heat-${rate == null ? 'unset' : rateLevel(rate)} ${monthState(m.month) !== 'closed' ? 'is-forecast' : ''}`}
                           title={`${rep.name} ${m.label}: ${yen(m.landing)} / 予算 ${yen(m.budget)}`}
                         >
-                          {rate}%
+                          {rate == null ? '—' : `${rate}%`}
                         </td>
                       );
                     })}
@@ -134,6 +136,6 @@ export function BudgetTab({ repId }: { repId: string }) {
           </table>
         </div>
       </div>
-    </>
+    </div>
   );
 }

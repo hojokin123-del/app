@@ -1,17 +1,8 @@
 import type { Initiative, MonthlyRecord, SalesRep } from '../types/sales';
+import { CURRENT_MONTH, FISCAL_MONTHS, TODAY, addDays } from './calendar';
 
-/** 年度（4月始まり）と基準月。基準月より前は実績確定、基準月は進行中、以降は見込み。 */
-export const FISCAL_YEAR = 2026;
-export const CURRENT_MONTH = '2026-11';
-export const TODAY = '2026-11-15';
-
-export const FISCAL_MONTHS = Array.from({ length: 12 }, (_, i) => {
-  const m = ((i + 3) % 12) + 1;
-  const y = m >= 4 ? FISCAL_YEAR : FISCAL_YEAR + 1;
-  return `${y}-${String(m).padStart(2, '0')}`;
-});
-
-export const salesReps: SalesRep[] = [
+/** サンプルデータ（初回起動時・「サンプルに戻す」で使用）。日付は今日を基準に生成。 */
+export const sampleReps: SalesRep[] = [
   { id: 'r1', name: '伊藤 美咲', team: '営業1課', role: '課長', avatarInitials: '伊美' },
   { id: 'r2', name: '山田 健太', team: '営業1課', role: '主任', avatarInitials: '山健' },
   { id: 'r3', name: '小林 直樹', team: '営業1課', role: '担当', avatarInitials: '小直' },
@@ -45,7 +36,7 @@ function mulberry32(seed: number) {
 function buildRecords(): MonthlyRecord[] {
   const rand = mulberry32(20261115);
   const records: MonthlyRecord[] = [];
-  salesReps.forEach(rep => {
+  sampleReps.forEach(rep => {
     const p = PROFILE[rep.id];
     FISCAL_MONTHS.forEach((month, i) => {
       const budget = Math.round((p.base * SEASON[i]) / 10) * 10;
@@ -86,42 +77,42 @@ function buildRecords(): MonthlyRecord[] {
   return records;
 }
 
-export const monthlyRecords: MonthlyRecord[] = buildRecords();
+export const buildSampleRecords = buildRecords;
 
-export const initiatives: Initiative[] = [
+export const buildSampleInitiatives = (): Initiative[] => [
   {
     id: 'i1', title: '既存顧客への年末アップセル提案', description: '上位30社に上位プランの提案書を送付し、12月中に商談化する',
-    ownerId: 'r1', kpi: 'proposals', status: 'in_progress', startDate: '2026-11-01', dueDate: '2026-12-20',
+    ownerId: 'r1', kpi: 'proposals', status: 'in_progress', startDate: addDays(TODAY, -14), dueDate: addDays(TODAY, 35),
     progress: 40, expectedImpact: 600, note: '12社に提案済み',
   },
   {
     id: 'i2', title: '休眠顧客の掘り起こしコール', description: '過去2年取引のない顧客200社へ架電し、訪問アポを獲得する',
-    ownerId: 'r3', kpi: 'visits', status: 'in_progress', startDate: '2026-10-01', dueDate: '2026-11-30',
+    ownerId: 'r3', kpi: 'visits', status: 'in_progress', startDate: addDays(TODAY, -45), dueDate: addDays(TODAY, 15),
     progress: 55, expectedImpact: 250, note: '架電110社・アポ14件',
   },
   {
     id: 'i3', title: '展示会リードのフォロー徹底', description: '10月展示会の名刺交換リード150件を48時間以内に一次フォロー',
-    ownerId: 'r5', kpi: 'meetings', status: 'done', startDate: '2026-10-20', dueDate: '2026-11-10',
+    ownerId: 'r5', kpi: 'meetings', status: 'done', startDate: addDays(TODAY, -26), dueDate: addDays(TODAY, -5),
     progress: 100, expectedImpact: 400, note: '商談化22件',
   },
   {
     id: 'i4', title: '提案書テンプレートの刷新', description: '導入事例と費用対効果試算を標準化し、提案作成時間を半減する',
-    ownerId: 'r4', kpi: 'proposals', status: 'in_progress', startDate: '2026-09-15', dueDate: '2026-11-14',
+    ownerId: 'r4', kpi: 'proposals', status: 'in_progress', startDate: addDays(TODAY, -61), dueDate: addDays(TODAY, -1),
     progress: 80, expectedImpact: 150, note: '事例ページ作成中',
   },
   {
     id: 'i5', title: 'パートナー経由の共同提案', description: '販売代理店2社と共同キャンペーンを実施し、新規案件を獲得する',
-    ownerId: 'r2', kpi: 'deals', status: 'planned', startDate: '2026-12-01', dueDate: '2027-02-28',
+    ownerId: 'r2', kpi: 'deals', status: 'planned', startDate: addDays(TODAY, 16), dueDate: addDays(TODAY, 105),
     progress: 0, expectedImpact: 800, note: '',
   },
   {
     id: 'i6', title: '失注分析と再提案', description: '上期の失注案件40件を分析し、条件見直しで再提案する',
-    ownerId: 'r6', kpi: 'deals', status: 'on_hold', startDate: '2026-10-15', dueDate: '2026-12-15',
+    ownerId: 'r6', kpi: 'deals', status: 'on_hold', startDate: addDays(TODAY, -31), dueDate: addDays(TODAY, 30),
     progress: 20, expectedImpact: 300, note: '価格改定の決定待ち',
   },
   {
     id: 'i7', title: '年度末駆け込み需要の先行営業', description: '3月導入希望の案件を1月までに洗い出し、見積を前倒しする',
-    ownerId: 'r4', kpi: 'revenue', status: 'planned', startDate: '2027-01-05', dueDate: '2027-03-20',
+    ownerId: 'r4', kpi: 'revenue', status: 'planned', startDate: addDays(TODAY, 51), dueDate: addDays(TODAY, 125),
     progress: 0, expectedImpact: 1200, note: '',
   },
 ];

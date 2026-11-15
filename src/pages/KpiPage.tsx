@@ -1,11 +1,12 @@
 import { useMemo, useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { ChevronRight, Info } from 'lucide-react';
-import { useSales } from '../../context/SalesContext';
-import { CURRENT_MONTH, FISCAL_MONTHS } from '../../data/salesMockData';
-import { KPI_KEYS, KPI_LABELS, type KpiKey } from '../../types/sales';
-import { RateBadge } from './RateBadge';
-import { ALL, filterByRep, monthElapsedRate, monthLabel, pct, sumKpi } from './salesUtils';
+import { useSales } from '../store/salesStore';
+import { CURRENT_MONTH, FISCAL_MONTHS } from '../data/calendar';
+import { KPI_KEYS, KPI_LABELS, type KpiKey } from '../types/sales';
+import { PageHeader } from './sales/PageHeader';
+import { RateBadge } from './sales/RateBadge';
+import { ALL, filterByRep, monthElapsedRate, monthLabel, pct, sumKpi, rateOf } from './sales/salesUtils';
 
 const KPI_COLORS: Record<KpiKey, string> = {
   visits: '#2a78d6',
@@ -14,8 +15,8 @@ const KPI_COLORS: Record<KpiKey, string> = {
   deals: '#eda100',
 };
 
-export function KpiTab({ repId }: { repId: string }) {
-  const { reps, records, updateKpi } = useSales();
+export function KpiPage() {
+  const { reps, records, updateKpi, selectedRepId: repId } = useSales();
   const [period, setPeriod] = useState<string>('ytd');
   const editable = period !== 'ytd';
   const elapsed = monthElapsedRate();
@@ -37,7 +38,8 @@ export function KpiTab({ repId }: { repId: string }) {
   const periodLabel = period === 'ytd' ? '年度累計（確定月）' : `${monthLabel(period)}${period === CURRENT_MONTH ? '（進行中）' : ''}`;
 
   return (
-    <>
+    <div className="page">
+      <PageHeader title="KPI管理" />
       <div className="sales-subbar">
         <label className="sales-subbar-label">集計期間</label>
         <select className="filter-select" value={period} onChange={e => setPeriod(e.target.value)} aria-label="集計期間">
@@ -144,7 +146,7 @@ export function KpiTab({ repId }: { repId: string }) {
                       ) : (
                         <span>{kpi[k].actual} / {kpi[k].target}</span>
                       )}
-                      <div><RateBadge rate={pct(kpi[k].actual, kpi[k].target)} /></div>
+                      <div><RateBadge rate={rateOf(kpi[k].actual, kpi[k].target)} /></div>
                     </td>
                   ))}
                   <td className="num">{pct(kpi.deals.actual, kpi.meetings.actual)}%</td>
@@ -155,6 +157,6 @@ export function KpiTab({ repId }: { repId: string }) {
         </div>
       </div>
       <p className="sales-footnote">※ 年度累計は実績確定月（基準月の前月まで）の合計です。当月は月途中の実績です。</p>
-    </>
+    </div>
   );
 }

@@ -690,3 +690,30 @@ body { background: var(--bg); min-height: 100vh; }
   .sales-tiles, .sales-tiles.three { grid-template-columns: repeat(2, 1fr); }
   .kpi-funnel { grid-template-columns: repeat(2, 1fr); row-gap: 20px; }
 }
+
+/* ヘッダー操作・保存表示・データ管理 */
+.page-header-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.save-indicator { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #a7f3d0; text-decoration: none; padding: 6px 8px; border-radius: 8px; }
+.save-indicator:hover { background: rgba(255,255,255,0.08); }
+.save-indicator.error { color: #fecaca; }
+.save-indicator span { display: flex; flex-direction: column; line-height: 1.3; }
+.save-indicator small { color: var(--sidebar-text); font-size: 11px; }
+.btn-danger { background: #fee2e2; color: #b91c1c; }
+.btn-danger:hover:not(:disabled) { background: #fecaca; }
+.data-status { display: flex; align-items: center; gap: 12px; padding: 16px 20px; margin-bottom: 16px; }
+.data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+.data-grid > .card:first-child { grid-row: span 2; }
+.data-note { padding: 0 20px 16px; line-height: 1.7; }
+.data-actions { display: flex; flex-direction: column; }
+.data-action { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--border); }
+.data-action:last-child { border-bottom: none; }
+.data-action strong { font-size: 14px; }
+.data-action .btn { flex-shrink: 0; }
+.data-message { margin: 12px 20px 16px; padding: 10px 12px; border-radius: 8px; font-size: 13px; }
+.data-message.ok { background: #d1fae5; color: #047857; }
+.data-message.ng { background: #fee2e2; color: #b91c1c; }
+@media (max-width: 1100px) { .data-grid { grid-template-columns: 1fr; } }
+.onboarding { display: flex; align-items: center; gap: 16px; padding: 16px 20px; margin-bottom: 16px; border-color: var(--primary); background: var(--primary-light); flex-wrap: wrap; }
+.onboarding span { flex: 1; font-size: 13px; color: var(--text-muted); min-width: 240px; }
+.rate-unset { background: #f1f5f9; color: #64748b; font-weight: 600; }
+.heat-cell.heat-unset { background: #f8fafc; color: #94a3b8; }

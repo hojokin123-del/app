@@ -1,73 +1,39 @@
-# React + TypeScript + Vite
+# 営業管理システム
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+営業チームの予実・KPI・施策を管理するWebアプリ（React + TypeScript + Vite）。
 
-Currently, two official plugins are available:
+## 機能
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| 画面 | 内容 |
+|---|---|
+| ダッシュボード | 年間予算・累計実績・着地見込み・今月進捗・受注件数・成約率、月別/累計予実グラフ、担当者ランキング、施策の状況 |
+| 予実管理 | 月別予実表（予算・実績・見込みを編集可）、担当者×月の達成率 |
+| KPI管理 | 訪問→商談→提案→受注のファネル、担当者別達成率、KPI実績・目標の編集 |
+| 施策管理 | 具体的施策の登録・編集・削除、ステータス/進捗管理、期限超過の警告 |
+| 担当者 | 担当者の追加・編集・削除、チーム別サマリー、担当者別カード |
+| データ管理 | 保存状態の確認、JSONバックアップ/復元、CSV出力、サンプルに戻す/全削除 |
 
-## React Compiler
+- 年度は4月始まり。今日の日付から当年度・当月を自動判定します（当月より前＝確定、当月＝進行中、以降＝見込み）。
+- 金額の単位は万円。
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## データの保存
 
-## Expanding the ESLint configuration
+入力内容はブラウザの localStorage に自動保存されます（キー: `sales-app/data/v1`）。
+保存先はそのブラウザ内のみのため、別の端末で使う場合や定期的な保全には「データ管理」からJSONバックアップを取ってください。
+初回起動時はサンプルデータが入っています（「データ管理」→「すべて削除」で空から開始できます）。
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 開発
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # 開発サーバー
+npm run build    # 本番ビルド
+npm run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 構成
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `src/store/salesStore.ts` … データストア（localStorage 永続化）
+- `src/data/calendar.ts` … 年度・基準日の算出
+- `src/data/salesMockData.ts` … サンプルデータ
+- `src/pages/` … 各画面、`src/pages/sales/` … 共通部品と集計ロジック

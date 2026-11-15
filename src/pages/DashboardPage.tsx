@@ -1,16 +1,20 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { Wallet, TrendingUp, Flag, CalendarDays, Handshake, Percent } from 'lucide-react';
-import { useSales } from '../../context/SalesContext';
-import { TODAY } from '../../data/salesMockData';
-import { INITIATIVE_STATUS_COLORS, INITIATIVE_STATUS_LABELS, type InitiativeStatus } from '../../types/sales';
-import { RateBadge } from './RateBadge';
-import { ALL, COLORS, aggregateByMonth, filterByRep, monthLabel, pct, summarize, sumKpi, withCumulative, yen } from './salesUtils';
+import { useSales } from '../store/salesStore';
+import { TODAY } from '../data/calendar';
+import { INITIATIVE_STATUS_COLORS, INITIATIVE_STATUS_LABELS, type InitiativeStatus } from '../types/sales';
+import { PageHeader } from './sales/PageHeader';
+import { RateBadge } from './sales/RateBadge';
+import { ALL, COLORS, aggregateByMonth, filterByRep, monthLabel, pct, summarize, sumKpi, withCumulative, yen, rateOf } from './sales/salesUtils';
 
-type Props = { repId: string; onSelectRep: (id: string) => void; onOpenTab: (tab: string) => void };
+const TAB_PATHS = { summary: '/', budget: '/budget', reps: '/reps', initiatives: '/initiatives' } as const;
 
-export function SummaryTab({ repId, onSelectRep, onOpenTab }: Props) {
-  const { reps, records, initiatives } = useSales();
+export function DashboardPage() {
+  const { reps, records, initiatives, selectedRepId: repId, setSelectedRepId } = useSales();
+  const navigate = useNavigate();
+  const onOpenTab = (tab: keyof typeof TAB_PATHS) => navigate(TAB_PATHS[tab]);
   const repRecords = useMemo(() => filterByRep(records, repId), [records, repId]);
   const months = useMemo(() => aggregateByMonth(repRecords), [repRecords]);
   const s = summarize(months);
@@ -29,7 +33,7 @@ export function SummaryTab({ repId, onSelectRep, onOpenTab }: Props) {
   const ranking = useMemo(() => reps.map(rep => {
     const sm = summarize(aggregateByMonth(filterByRep(records, rep.id)));
     return { rep, ...sm };
-  }).sort((a, b) => b.ytdRate - a.ytdRate), [reps, records]);
+  }).sort((a, b) => (b.ytdRate ?? -1) - (a.ytdRate ?? -1)), [reps, records]);
 
   const myInitiatives = repId === ALL ? initiatives : initiatives.filter(i => i.ownerId === repId);
   const statusCount = (Object.keys(INITIATIVE_STATUS_LABELS) as InitiativeStatus[]).map(st => ({
@@ -45,12 +49,20 @@ export function SummaryTab({ repId, onSelectRep, onOpenTab }: Props) {
     { icon: TrendingUp, bg: '#f0fdf4', color: '#059669', label: `累計実績（〜${monthLabel(months.filter(m => m.state === 'closed').at(-1)?.month ?? '')}）`, value: yen(s.ytdActual), sub: <>予算 {yen(s.ytdBudget)} ・ <RateBadge rate={s.ytdRate} /></> },
     { icon: Flag, bg: '#faf5ff', color: '#8b5cf6', label: '年間着地見込み', value: yen(s.landing), sub: <>予算差 {s.gap >= 0 ? '+' : ''}{yen(s.gap)} ・ <RateBadge rate={s.landingRate} /></> },
     { icon: CalendarDays, bg: '#fffbeb', color: '#d97706', label: `今月（${s.current?.label}）進捗`, value: yen(s.current?.actual), sub: <>予算 {yen(s.current?.budget)} ・ 進捗 {pct(s.current?.actual ?? 0, s.current?.budget ?? 0)}%</> },
-    { icon: Handshake, bg: '#f0f9ff', color: '#0284c7', label: '受注件数（確定月累計）', value: `${kpi.deals.actual}件`, sub: <>目標 {kpi.deals.target}件 ・ <RateBadge rate={pct(kpi.deals.actual, kpi.deals.target)} /></> },
+    { icon: Handshake, bg: '#f0f9ff', color: '#0284c7', label: '受注件数（確定月累計）', value: `${kpi.deals.actual}件`, sub: <>目標 {kpi.deals.target}件 ・ <RateBadge rate={rateOf(kpi.deals.actual, kpi.deals.target)} /></> },
     { icon: Percent, bg: '#fdf2f8', color: '#db2777', label: '成約率（受注÷商談）', value: `${closeRate}%`, sub: <>商談 {kpi.meetings.actual}件 → 受注 {kpi.deals.actual}件</> },
   ];
 
   return (
-    <>
+    <div className="page">
+      <PageHeader title="ダッシュボード" />
+      {reps.length === 0 && (
+        <div className="card onboarding">
+          <strong>まだ担当者が登録されていません</strong>
+          <span>①「担当者」で営業担当を追加 → ②「予実管理」で月別予算を入力 → ③「KPI管理」でKPI目標を入力、の順に設定してください。</span>
+          <button className="btn btn-primary btn-sm" onClick={() => navigate('/reps')}>担当者を追加する</button>
+        </div>
+      )}
       <div className="sales-tiles">
         {tiles.map(t => (
           <div className="stat-card" key={t.label}>
@@ -114,7 +126,7 @@ export function SummaryTab({ repId, onSelectRep, onOpenTab }: Props) {
               <button
                 key={r.rep.id}
                 className={`activity-item sales-rank-row ${repId === r.rep.id ? 'selected' : ''}`}
-                onClick={() => onSelectRep(repId === r.rep.id ? ALL : r.rep.id)}
+                onClick={() => setSelectedRepId(repId === r.rep.id ? ALL : r.rep.id)}
               >
                 <span className="sales-rank-no">{i + 1}</span>
                 <div className="avatar avatar-sm">{r.rep.avatarInitials}</div>
@@ -123,7 +135,7 @@ export function SummaryTab({ repId, onSelectRep, onOpenTab }: Props) {
                   <div className="activity-meta">{r.rep.team} ・ 実績 {yen(r.ytdActual)} / 予算 {yen(r.ytdBudget)}</div>
                 </div>
                 <div className="sales-rank-bar">
-                  <div className="progress-bar"><div className="progress-fill" style={{ width: `${Math.min(r.ytdRate, 100)}%`, background: COLORS.actual }} /></div>
+                  <div className="progress-bar"><div className="progress-fill" style={{ width: `${Math.min(r.ytdRate ?? 0, 100)}%`, background: COLORS.actual }} /></div>
                 </div>
                 <RateBadge rate={r.ytdRate} />
               </button>
@@ -166,6 +178,6 @@ export function SummaryTab({ repId, onSelectRep, onOpenTab }: Props) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -1,23 +1,25 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { Users, ClipboardList, BarChart2, Settings, Star, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, Wallet, Gauge, Users, ListChecks, Database, TrendingUp, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { useSales } from '../store/salesStore';
 
 const navItems = [
-  { to: '/sales', label: '営業ダッシュボード', icon: TrendingUp },
-  { to: '/', label: 'ダッシュボード', icon: BarChart2, end: true },
-  { to: '/employees', label: '従業員管理', icon: Users },
-  { to: '/evaluations', label: '評価管理', icon: ClipboardList },
-  { to: '/criteria', label: '評価項目', icon: Star },
-  { to: '/settings', label: '設定', icon: Settings },
+  { to: '/', label: 'ダッシュボード', icon: LayoutDashboard, end: true },
+  { to: '/budget', label: '予実管理', icon: Wallet },
+  { to: '/kpi', label: 'KPI管理', icon: Gauge },
+  { to: '/initiatives', label: '施策管理', icon: ListChecks },
+  { to: '/reps', label: '担当者', icon: Users },
+  { to: '/data', label: 'データ管理', icon: Database },
 ];
 
 export function Layout() {
+  const { saveStatus, lastSavedAt } = useSales();
   return (
     <div className="layout">
       <aside className="sidebar">
         <div className="sidebar-header">
           <div className="logo">
-            <ClipboardList size={24} />
-            <span>人事評価システム</span>
+            <TrendingUp size={24} />
+            <span>営業管理システム</span>
           </div>
         </div>
         <nav className="sidebar-nav">
@@ -29,13 +31,13 @@ export function Layout() {
           ))}
         </nav>
         <div className="sidebar-footer">
-          <div className="current-user">
-            <div className="avatar avatar-sm">管</div>
-            <div className="user-info">
-              <div className="user-name">管理者</div>
-              <div className="user-role">システム管理者</div>
-            </div>
-          </div>
+          <NavLink to="/data" className={`save-indicator ${saveStatus}`}>
+            {saveStatus === 'saved' ? <CheckCircle2 size={14} /> : <AlertTriangle size={14} />}
+            <span>
+              {saveStatus === 'saved' ? '自動保存済み' : '保存に失敗しました'}
+              {saveStatus === 'saved' && lastSavedAt && <small>{new Date(lastSavedAt).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}</small>}
+            </span>
+          </NavLink>
         </div>
       </aside>
       <main className="main-content">

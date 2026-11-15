@@ -1,7 +1,8 @@
-import { CURRENT_MONTH, FISCAL_MONTHS, TODAY } from '../../data/salesMockData';
+import { CURRENT_MONTH, FISCAL_MONTHS, TODAY } from '../../data/calendar';
+import { ALL } from '../../store/salesStore';
+export { ALL };
 import { KPI_KEYS, type KpiKey, type MonthlyRecord } from '../../types/sales';
 
-export const ALL = 'all';
 
 export const COLORS = {
   budget: '#94a3b8',
@@ -15,6 +16,8 @@ export const COLORS = {
 export const monthLabel = (m: string) => `${Number(m.slice(5))}月`;
 export const yen = (v: number | null | undefined) => (v == null ? '—' : `${Math.round(v).toLocaleString()}万円`);
 export const pct = (num: number, den: number) => (den > 0 ? Math.round((num / den) * 100) : 0);
+/** 達成率。目標・予算が0（未設定）の場合は null */
+export const rateOf = (num: number, den: number) => (den > 0 ? Math.round((num / den) * 100) : null);
 
 export type MonthAgg = {
   month: string;
@@ -61,9 +64,9 @@ export function summarize(months: MonthAgg[]) {
     annualBudget,
     ytdBudget,
     ytdActual,
-    ytdRate: pct(ytdActual, ytdBudget),
+    ytdRate: rateOf(ytdActual, ytdBudget),
     landing,
-    landingRate: pct(landing, annualBudget),
+    landingRate: rateOf(landing, annualBudget),
     gap: landing - annualBudget,
     current,
   };

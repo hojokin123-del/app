@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
-import { useSales } from '../../context/SalesContext';
-import { TODAY } from '../../data/salesMockData';
+import { useSales } from '../store/salesStore';
+import { TODAY } from '../data/calendar';
 import {
   INITIATIVE_STATUS_COLORS, INITIATIVE_STATUS_LABELS, KPI_LABELS,
   type Initiative, type InitiativeStatus, type KpiKey,
-} from '../../types/sales';
-import { ALL, yen } from './salesUtils';
+} from '../types/sales';
+import { PageHeader } from './sales/PageHeader';
+import { ALL, yen } from './sales/salesUtils';
 
 type Draft = Omit<Initiative, 'id'>;
 
@@ -90,8 +91,8 @@ function InitiativeForm({ initial, onSave, onClose }: { initial: Draft; onSave: 
   );
 }
 
-export function InitiativesTab({ repId }: { repId: string }) {
-  const { reps, initiatives, addInitiative, updateInitiative, deleteInitiative } = useSales();
+export function InitiativesPage() {
+  const { reps, initiatives, addInitiative, updateInitiative, deleteInitiative, selectedRepId: repId } = useSales();
   const [statusFilter, setStatusFilter] = useState<InitiativeStatus | 'all'>('all');
   const [editing, setEditing] = useState<Initiative | 'new' | null>(null);
 
@@ -110,7 +111,8 @@ export function InitiativesTab({ repId }: { repId: string }) {
   };
 
   return (
-    <>
+    <div className="page">
+      <PageHeader title="施策管理" />
       <div className="sales-tiles three">
         <div className="stat-card"><div className="stat-body"><div className="stat-label">進行中・計画中の施策</div><div className="stat-value sales-stat-value">{active.length}件</div></div></div>
         <div className="stat-card"><div className="stat-body"><div className="stat-label">想定効果の合計（未完了）</div><div className="stat-value sales-stat-value">{yen(impact)}</div></div></div>
@@ -148,7 +150,7 @@ export function InitiativesTab({ repId }: { repId: string }) {
                       <div className="activity-meta">{i.description}</div>
                       {i.note && <div className="initiative-note">📝 {i.note}</div>}
                     </td>
-                    <td className="nowrap">{owner?.name ?? '—'}</td>
+                    <td className="nowrap">{owner?.name ?? <span className="text-critical">未割当</span>}</td>
                     <td className="nowrap"><span className="badge">{KPI_LABELS[i.kpi]}</span></td>
                     <td className="nowrap">
                       {i.dueDate}
@@ -200,6 +202,6 @@ export function InitiativesTab({ repId }: { repId: string }) {
           onSave={d => (editing === 'new' ? addInitiative(d) : updateInitiative(editing.id, d))}
         />
       )}
-    </>
+    </div>
   );
 }
