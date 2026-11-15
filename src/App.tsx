@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
+import { Operations } from './pages/Operations';
 import { Employees } from './pages/Employees';
 import { EmployeeDetail } from './pages/EmployeeDetail';
 import { Evaluations } from './pages/Evaluations';
@@ -18,6 +19,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
+            <Route path="operations" element={<Operations />} />
             <Route path="employees" element={<Employees />} />
             <Route path="employees/:id" element={<EmployeeDetail />} />
             <Route path="evaluations" element={<Evaluations />} />
